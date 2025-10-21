@@ -29,13 +29,13 @@
             <h5 class="mb-3 fw-bold">เมนูหลัก (สำหรับผู้ดูแลระบบ)</h5>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-primary w-100">📦 เปิดใบสั่งสินค้า</button>
+                    <button class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</button>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-primary w-100">✅ อนุมัติใบสั่งซื้อ</button>
+                    <button class="btn btn-outline-primary w-100">✅ อนุมัติใบสั่งซื้อ</button>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-primary w-100">🚚 รับสินค้าเข้า</button>
+                    <button class="btn btn-outline-primary w-100">🚚 รับสินค้าเข้า</button>
                 </div>
                 <div class="col-6 col-md-3">
                     <button class="btn btn-outline-primary w-100">🧾 เปิดใบสั่งขาย</button>
@@ -82,7 +82,10 @@
                             <td>120</td>
                             <td>ขวด</td>
                             <td>ชั้น A1</td>                             
-                        </tr>                        
+                        </tr>    
+                        
+                       
+                        
                     </tbody>
                 </table>
             </div>
