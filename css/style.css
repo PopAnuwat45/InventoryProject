@@ -1,0 +1,52 @@
+/* สีหลักของระบบ */
+:root {
+    --main-blue: #2859b8;
+    --bg-cream: #fffef1;
+}
+
+/* พื้นหลังหลัก */
+body {
+    background-color: var(--bg-cream);
+    font-family: 'Prompt', sans-serif;
+}
+
+/* Navbar */
+.main-nav {
+    background-color: var(--main-blue);
+}
+
+/* ปุ่มหลัก */
+.btn-primary {
+    background-color: var(--main-blue);
+    border-color: var(--main-blue);
+}
+
+.btn-primary:hover {
+    background-color: #1e4691;
+}
+
+/* ส่วนตารางสินค้า */
+.table-primary th {
+    background-color: var(--main-blue) !important;
+    color: white;
+}
+
+/* Footer */
+.footer-bg {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+    .menu-section h5 {
+        font-size: 1.1rem;
+    }
+    .btn {
+        font-size: 0.9rem;
+    }
+    .inventory-section input {
+        width: 100% !important;
+        margin-top: 0.5rem;
+    }
+}
