@@ -38,7 +38,7 @@
                     <button class="btn btn-primary w-100">🚚 รับสินค้าเข้า</button>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-primary w-100">🧾 เปิดใบสั่งขาย</button>
+                    <button class="btn btn-outline-primary w-100">🧾 เปิดใบสั่งขาย</button>
                 </div>
                 <div class="col-6 col-md-3">
                     <button class="btn btn-outline-primary w-100">👤 จัดการผู้ใช้</button>
