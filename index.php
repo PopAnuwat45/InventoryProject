@@ -59,7 +59,7 @@
         <div class="inventory-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold mb-0">รายการสินค้าในคลัง</h5>
-                <input type="text" class="form-control w-50 w-md-25" placeholder="🔍 ค้นหาสินค้า...">
+                <input type="text" class="form-control w-50 w-md-25" placeholder="🔍 ค้นหาสินค้าจากรหัสที่นี่...">
             </div>
 
             <div class="table-responsive">
