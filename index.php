@@ -16,7 +16,7 @@
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
                 <img src="img/logo.jpg" alt="" width="100" height="30" class="me-2">
-                ระบบคลังสินค้า
+                ระบบคลังสินค้า55
             </a>
         </div>
     </nav>
@@ -26,7 +26,7 @@
 
         <!-- Section: Menu Buttons -->
         <div class="menu-section mb-4">
-            <h5 class="mb-3 fw-bold">เมนูหลัก (สำหรับผู้ดูแลระบบ)</h5>
+            <h5 class="mb-3 fw-bold">เมนูหลัก555 (สำหรับผู้ดูแลระบบ)</h5>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
                     <button class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</button>
