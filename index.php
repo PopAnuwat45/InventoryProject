@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -47,7 +48,7 @@
                     <button class="btn btn-outline-primary w-100">🛠 จัดการสินค้า</button>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">📊 ดูสต็อกสินค้า</button>
+                    <button class="btn btn-outline-primary w-100">🗄️ จัดการชั้นวางของ</button>
                 </div>
                 <div class="col-6 col-md-3">
                     <button class="btn btn-outline-primary w-100">📜 ประวัติการเคลื่อนไหว</button>
