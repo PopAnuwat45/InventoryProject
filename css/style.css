@@ -37,6 +37,13 @@ body {
     color: white;
 }
 
+.table-striped tbody tr:nth-child(odd) {
+        background-color: #f2f2f2; /* แถวคี่ เทาอ่อน */
+}
+.table-striped tbody tr:nth-child(even) {
+        background-color: #ffffff; /* แถวคู่ ขาว */
+}
+
 /* Responsive สำหรับมือถือ */
 @media (max-width: 768px) {
     .menu-section h5 {

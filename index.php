@@ -1,4 +1,24 @@
+<?php
+        // connect to DB
+    include('server.php');
 
+    // ดึงข้อมูลสินค้า
+    $sql = "SELECT 
+            product.product_id_full,
+            product.product_name,
+            product.stock_qty,
+            product.unit,
+            location.location_full_id,
+            product_location.qty AS location_qty
+        FROM product
+        LEFT JOIN product_location 
+            ON product.product_id = product_location.product_id
+        LEFT JOIN location 
+            ON product_location.location_id = location.location_id
+        ORDER BY product.product_id_full, location.location_full_id";
+
+    $result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -63,33 +83,41 @@
                 <input type="text" class="form-control w-50 w-md-25" placeholder="🔍 ค้นหาสินค้าจากรหัสที่นี่...">
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+            <?php
+            if ($result->num_rows > 0){
+            echo '<div class="table-responsive">
+                <table class="table table-hover align-middle table-striped">
                     <thead class="table-primary">
                         <tr>
                             <th>รหัสสินค้า</th>
                             <th>ชื่อสินค้า</th>
                             <th>จำนวนคงเหลือ</th>
                             <th>หน่วยนับ</th>
-                            <th>ตำแหน่งจัดเก็บ</th>
-                            
-                            
+                            <th>ตำแหน่งจัดเก็บ</th>                            
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>P001</td>
-                            <td>ขวดน้ำดื่ม 500ml</td>
-                            <td>120</td>
-                            <td>ขวด</td>
-                            <td>ชั้น A1</td>                             
-                        </tr>    
-                        
-                       
-                        
-                    </tbody>
+                    <tbody>';
+            while($row = $result->fetch_assoc()) {
+                echo'   <tr>
+                            <td>' . htmlspecialchars($row['product_id_full']) . '</td>
+                            <td>' . htmlspecialchars($row['product_name']) . '</td>
+                            <td>' . htmlspecialchars($row['stock_qty']) . '</td>
+                            <td>' . htmlspecialchars($row['unit']) . '</td>
+                            <td>' . htmlspecialchars($row['location_full_id'] ?? '-') . ' (' . ($row['location_qty'] ?? 0) . ')</td>                             
+                        </tr>';
+            }                                
+            echo'   </tbody>
                 </table>
-            </div>
+            </div>';
+            } else {
+                echo "ไม่มีข้อมูลสินค้า";
+            }
+
+            $conn->close();
+            ?>
+            
+
+
         </div>
 
     </div>
