@@ -50,28 +50,28 @@
             <h5 class="mb-3 fw-bold">เมนูหลัก (สำหรับผู้ดูแลระบบ)</h5>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</button>
+                    <a href ="create_po.php" class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">✅ อนุมัติใบสั่งซื้อ</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">✅ อนุมัติใบสั่งซื้อ</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">🚚 รับสินค้าเข้า</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">🚚 รับสินค้าเข้า</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">🧾 เปิดใบสั่งขาย</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">🧾 เปิดใบสั่งขาย</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">👤 จัดการผู้ใช้</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">👤 จัดการผู้ใช้</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">🛠 จัดการสินค้า</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">🛠 จัดการสินค้า</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">🗄️ จัดการชั้นวางของ</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">🗄️ จัดการชั้นวางของ</a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button class="btn btn-outline-primary w-100">📜 ประวัติการเคลื่อนไหว</button>
+                    <a href ="#" class="btn btn-outline-primary w-100">📜 ประวัติการเคลื่อนไหว</a>
                 </div>
             </div>
         </div>
