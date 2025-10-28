@@ -124,7 +124,7 @@
 
     <!-- Footer -->
     <footer class="text-center py-3 mt-auto footer-bg">
-        <small>© 2025 บริษัท มาคตางค์ จำกัด | ระบบจัดการคลังสินค้า</small>
+        <small>© 2025 บริษัท มาคตางค์ จำกัด | ระบบคลังสินค้า</small>
     </footer>
 
     <!-- Bootstrap JS -->
