@@ -50,7 +50,7 @@
             <h5 class="mb-3 fw-bold">เมนูหลัก (สำหรับผู้ดูแลระบบ)</h5>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
-                    <a href ="create_po.php" class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</a>
+                    <a href ="create_po.php" class="btn btn-outline-primary w-100">📦 เปิดใบสั่งซื้อสินค้า</a>
                 </div>
                 <div class="col-6 col-md-3">
                     <a href ="#" class="btn btn-outline-primary w-100">✅ อนุมัติใบสั่งซื้อ</a>

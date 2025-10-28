@@ -18,6 +18,32 @@
         ORDER BY product.product_id_full, location.location_full_id";
 
     $result = $conn->query($sql);
+
+    // ดึงปีและเดือนปัจจุบัน
+    $year = date('y'); // เช่น 68
+    $month = date('m'); // เช่น 10
+
+    // ดึงข้อมูลใบ PO ล่าสุด
+    $sql_last_po = "SELECT po_id, po_number FROM purchase_order ORDER BY po_id DESC LIMIT 1";
+    $result_last_po = $conn->query($sql_last_po);
+
+    if ($result_last_po && $result_last_po->num_rows > 0) {
+        $row_last_po = $result_last_po->fetch_assoc();
+        $last_id = (int)$row_last_po['po_id'];
+        $last_po_number = $row_last_po['po_number'];
+
+        // แยกเลขท้าย เช่น PO6810-0001 → 0001
+        $last_number = (int)substr($last_po_number, -4);
+        $next_number = $last_number + 1;
+
+        // สร้างรหัสใหม่
+        $new_po_id = $last_id + 1;
+        $new_po_number = "PO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
+    } else {
+        // ถ้ายังไม่มีข้อมูลเลย
+        $new_po_id = 1;
+        $new_po_number = "PO" . $year . $month . "-0001";
+    }
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -50,7 +76,7 @@
             <h5 class="mb-3 fw-bold">เปิดใบสั่งสินค้า</h5>
             <div class="row g-2">
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">📦 เปิดใบสั่งสินค้า</a>
+                    <a href ="#" class="btn btn-outline-primary w-100">📦 เปิดใบสั่งซื้อสินค้า</a>
                 </div>
                 <div class="col-6 col-md-3">
                     <a href ="#" class="btn btn-outline-primary w-100">✅ อนุมัติใบสั่งซื้อ</a>
@@ -80,6 +106,14 @@
     <h5 class="mb-3 fw-bold">สร้างใบสั่งซื้อสินค้า (Purchase Order)</h5>
 
     <form action="save_po.php" method="POST">
+
+    <!-- รหัสใบสั่งซื้อ -->
+    <div class="mb-3">
+        <label for="po_number" class="form-label">รหัสใบสั่งซื้อ (PO Number)</label>
+        <input type="text" name="po_number" id="po_number" class="form-control" 
+            value="<?php echo $new_po_number; ?>" readonly>
+        <input type="hidden" name="po_id" value="<?php echo $new_po_id; ?>">
+    </div>
 
     <!-- เลือกซัพพลายเออร์ -->
     <div class="mb-3">
