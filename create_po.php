@@ -110,7 +110,8 @@
         <table class="table table-bordered table-striped" id="po_items_table">
             <thead>
                 <tr>
-                    <th>สินค้า</th>
+                    <th>รหัสสินค้า</th>
+                    <th>ชื่อสินค้า</th>
                     <th>จำนวน</th>
                     <th>ราคาต่อหน่วย</th>
                     <th>หน่วยนับ</th>
@@ -120,23 +121,18 @@
             <tbody>
                 <tr>
                     <td>
-                        <select name="product_id[]" class="form-select" required>
-                            <option value="">-- เลือกสินค้า --</option>
-                            <?php
-                            $sql_products = "SELECT product_id, product_id_full, product_name, unit FROM product ORDER BY product_name ASC";
-                            $result_products = $conn->query($sql_products);
-                            if($result_products->num_rows > 0){
-                                while($row_product = $result_products->fetch_assoc()){
-                                    echo '<option value="'.$row_product['product_id'].'" data-unit="'.$row_product['unit'].'">'
-                                        .htmlspecialchars($row_product['product_id_full'].' - '.$row_product['product_name']).'</option>';
-                                }
-                            }
-                            ?>
-                        </select>
+                        <div class="product-search-wrapper" style="position: relative;">
+                        <input type="text" name="product_code[]" class="form-control product-search" placeholder="พิมพ์รหัสสินค้า เช่น P0001" autocomplete="off" required>
+                        <div class="product-list"></div>
+
+                        <!-- ที่จะเอาค่าที่ค้นเจอเก็บไว้ (hidden) -->
+                        <input type="hidden" name="product_id[]" class="product-id">
+                        </div>
                     </td>
+                    <td><input type="text" name="po_name[]" class="form-control" require></td>
                     <td><input type="number" name="po_qty[]" class="form-control" min="1" required></td>
                     <td><input type="number" name="po_unit_price[]" class="form-control" min="0" step="0.01" required></td>
-                    <td><input type="text" name="po_unit[]" class="form-control" readonly></td>
+                    <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
                     <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                 </tr>
             </tbody>
@@ -160,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function(){
         const firstRow = tableBody.querySelector('tr');
         const newRow = firstRow.cloneNode(true);
         newRow.querySelectorAll('input').forEach(input => input.value = '');
-        newRow.querySelector('select').selectedIndex = 0;
         tableBody.appendChild(newRow);
     });
 
@@ -195,5 +190,51 @@ document.addEventListener('DOMContentLoaded', function(){
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- โค้ดในส่วนของการดึงข้อมูล -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+    $(document).ready(function(){
+        $(document).on("keyup", ".product-search", function(){
+            let query = $(this).val();
+            let inputField = $(this);
+            let resultBox = $(this).siblings(".product-list");
+
+            if(query.length >= 2){ // เริ่มค้นเมื่อพิมพ์เกิน 2 ตัว
+                $.ajax({
+                    url: "search_product.php",
+                    method: "POST",
+                    data: {query: query},
+                    success: function(data){
+                        resultBox.html(data);
+                        resultBox.show();
+                    }
+                });
+            } else{
+                resultBox.hide();
+            }
+        });
+
+        // เมื่อคลิกเลือกรายการที่ค้นเจอ
+        $(document).on("click", ".product-item", function(){
+            let product_id = $(this).data("id");
+            let product_code = $(this).data("code");
+            let product_name = $(this).data("name");
+            let unit = $(this).data("unit");
+
+            let parent = $(this).closest(".product-list").parent();
+            parent.find(".product-search").val(product_code);
+            parent.find(".product-id").val(product_id);
+            parent.find(".unit-field").val(unit);
+
+            // ✅ หา input ชื่อสินค้าในแถวเดียวกัน แล้วใส่ชื่อ
+            parent.closest('tr').find('input[name="po_name[]"]').val(product_name);
+            parent.closest('tr').find('input[name="unit[]"]').val(unit);
+
+            $(this).parent().hide(); // ซ่อนผลลัพธ์
+        });
+    });
+    </script>
 </body>
 </html>
