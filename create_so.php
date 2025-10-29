@@ -102,7 +102,9 @@
             <div class="customer-search-wrapper" style="position: relative;">
                 <input type="text" name="customer_name" id="customer_name" class="form-control customer-search" 
                     placeholder="พิมพ์ชื่อหรือรหัสลูกค้า" autocomplete="off" required>
-                <div class="customer-list" style="position:absolute; z-index:10; background:#fff; width:100%; border:1px solid #ccc;"></div>
+                <div class="customer-list"></div>
+
+
                 <input type="hidden" name="customer_id" class="customer-id">
             </div>
         </div>

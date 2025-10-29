@@ -85,6 +85,30 @@ body {
     background-color: #f0f0f0;
 }
 
+.customer-search-wrapper {
+    position: relative;
+}
 
+.customer-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
+.customer-item {
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.customer-item:hover {
+    background-color: #f0f0f0;
+}
 

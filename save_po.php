@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt_item->close();
 
-        echo "บันทึกใบสั่งซื้อเรียบร้อยแล้ว!";
+        echo "<script>alert('เปิดใบสั่งซื้อเรียบร้อยแล้ว'); window.location='create_po.php';</script>";
     } else {
-        echo "เกิดข้อผิดพลาด: " . $stmt_po->error;
+        echo "<script>alert('เกิดข้อผิดพลาด ทำรายการไม่สำเร็จ'); window.location='create_po.php';</script>" . $stmt_po->error;
     }
 
     $stmt_po->close();
