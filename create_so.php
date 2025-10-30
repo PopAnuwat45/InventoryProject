@@ -1,31 +1,52 @@
 <?php
-        // connect to DB
     include('server.php');
 
-
     // ดึงปีและเดือนปัจจุบัน
-    $year = date('y'); // เช่น 68
+    $year = date('y'); // เช่น 25
     $month = date('m'); // เช่น 10
 
-    // ดึงข้อมูลใบ SO ล่าสุด
-    $sql_last_so = "SELECT so_id, so_number FROM sale_order ORDER BY so_id DESC LIMIT 1";
+    // หาเลขล่าสุดของเดือนนี้
+    $sql_last_so = "
+        SELECT so_id, so_number
+        FROM sale_order
+        WHERE so_number LIKE 'SO{$year}{$month}-%'
+        ORDER BY so_id DESC
+        LIMIT 1
+    ";
     $result_last_so = $conn->query($sql_last_so);
 
     if ($result_last_so && $result_last_so->num_rows > 0) {
         $row_last_so = $result_last_so->fetch_assoc();
-        $last_id = (int)$row_last_so['so_id'];
-        $last_so_number = $row_last_so['so_number'];
-
-        $last_number = (int)substr($last_so_number, -4);
+        $last_number = (int)substr($row_last_so['so_number'], -4);
         $next_number = $last_number + 1;
+    } else {
+        $next_number = 1;
+    }
 
-        $new_so_id = $last_id + 1;
+    // วนลูปตรวจสอบไม่ให้เลขซ้ำ
+    do {
         $new_so_number = "SO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
+        $sql_check = "SELECT COUNT(*) AS cnt FROM sale_order WHERE so_number = '$new_so_number'";
+        $result_check = $conn->query($sql_check);
+        $row_check = $result_check->fetch_assoc();
+        if ($row_check['cnt'] > 0) {
+            $next_number++;
+        } else {
+            break;
+        }
+    } while (true);
+
+    // หา so_id ใหม่ (ไม่ได้ AUTO_INCREMENT)
+    $sql_last_id = "SELECT so_id FROM sale_order ORDER BY so_id DESC LIMIT 1";
+    $result_last_id = $conn->query($sql_last_id);
+    if ($result_last_id && $result_last_id->num_rows > 0) {
+        $row_last_id = $result_last_id->fetch_assoc();
+        $new_so_id = $row_last_id['so_id'] + 1;
     } else {
         $new_so_id = 1;
-        $new_so_number = "SO" . $year . $month . "-0001";
     }
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>

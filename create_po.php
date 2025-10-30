@@ -1,50 +1,54 @@
 <?php
-        // connect to DB
-    include('server.php');
+include('server.php');
 
-    // ดึงข้อมูลสินค้า
-    $sql = "SELECT 
-            product.product_id_full,
-            product.product_name,
-            product.stock_qty,
-            product.unit,
-            location.location_full_id,
-            product_location.qty AS location_qty
-        FROM product
-        LEFT JOIN product_location 
-            ON product.product_id = product_location.product_id
-        LEFT JOIN location 
-            ON product_location.location_id = location.location_id
-        ORDER BY product.product_id_full, location.location_full_id";
+// ดึงปีและเดือนปัจจุบัน
+$year = date('y'); // เช่น 25
+$month = date('m'); // เช่น 10
 
-    $result = $conn->query($sql);
+// หาข้อมูลใบ PO ล่าสุดของเดือนนี้
+$sql_last_po = "
+    SELECT po_id, po_number 
+    FROM purchase_order 
+    WHERE po_number LIKE 'PO{$year}{$month}-%' 
+    ORDER BY po_id DESC 
+    LIMIT 1
+";
+$result_last_po = $conn->query($sql_last_po);
 
-    // ดึงปีและเดือนปัจจุบัน
-    $year = date('y'); // เช่น 68
-    $month = date('m'); // เช่น 10
+if ($result_last_po && $result_last_po->num_rows > 0) {
+    $row_last_po = $result_last_po->fetch_assoc();
+    $last_number = (int)substr($row_last_po['po_number'], -4);
+    $next_number = $last_number + 1;
+} else {
+    $next_number = 1;
+}
 
-    // ดึงข้อมูลใบ PO ล่าสุด
-    $sql_last_po = "SELECT po_id, po_number FROM purchase_order ORDER BY po_id DESC LIMIT 1";
-    $result_last_po = $conn->query($sql_last_po);
-
-    if ($result_last_po && $result_last_po->num_rows > 0) {
-        $row_last_po = $result_last_po->fetch_assoc();
-        $last_id = (int)$row_last_po['po_id'];
-        $last_po_number = $row_last_po['po_number'];
-
-        // แยกเลขท้าย เช่น PO6810-0001 → 0001
-        $last_number = (int)substr($last_po_number, -4);
-        $next_number = $last_number + 1;
-
-        // สร้างรหัสใหม่
-        $new_po_id = $last_id + 1;
-        $new_po_number = "PO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
+// วนลูปตรวจสอบไม่ให้เลขซ้ำ
+do {
+    $new_po_number = "PO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
+    $sql_check = "SELECT COUNT(*) AS cnt FROM purchase_order WHERE po_number = '$new_po_number'";
+    $result_check = $conn->query($sql_check);
+    $row_check = $result_check->fetch_assoc();
+    if ($row_check['cnt'] > 0) {
+        // ถ้ามีเลขนี้แล้ว → เพิ่มเลขต่อไป
+        $next_number++;
     } else {
-        // ถ้ายังไม่มีข้อมูลเลย
-        $new_po_id = 1;
-        $new_po_number = "PO" . $year . $month . "-0001";
+        // ถ้าไม่ซ้ำ → ใช้เลขนี้ได้เลย
+        break;
     }
+} while (true);
+
+// หาค่า po_id ใหม่ (ไม่ได้ AUTO_INCREMENT)
+$sql_last_id = "SELECT po_id FROM purchase_order ORDER BY po_id DESC LIMIT 1";
+$result_last_id = $conn->query($sql_last_id);
+if ($result_last_id && $result_last_id->num_rows > 0) {
+    $row_last_id = $result_last_id->fetch_assoc();
+    $new_po_id = $row_last_id['po_id'] + 1;
+} else {
+    $new_po_id = 1;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>

@@ -3,21 +3,18 @@
     include('server.php');
 
     // ดึงข้อมูลสินค้า
-    $sql = "SELECT 
+        $sql = "SELECT 
             product.product_id_full,
             product.product_name,
-            product.stock_qty,
             product.unit,
-            location.location_full_id,
-            product_location.qty AS location_qty
+            location.location_full_id
         FROM product
-        LEFT JOIN product_location 
-            ON product.product_id = product_location.product_id
         LEFT JOIN location 
-            ON product_location.location_id = location.location_id
+            ON product.location_id = location.location_id
         ORDER BY product.product_id_full, location.location_full_id";
 
-    $result = $conn->query($sql);
+        $result = $conn->query($sql);
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -101,9 +98,9 @@
                 echo'   <tr>
                             <td>' . htmlspecialchars($row['product_id_full']) . '</td>
                             <td>' . htmlspecialchars($row['product_name']) . '</td>
-                            <td>' . htmlspecialchars($row['stock_qty']) . '</td>
+                            <td>รอข้อมูล</td>
                             <td>' . htmlspecialchars($row['unit']) . '</td>
-                            <td>' . htmlspecialchars($row['location_full_id'] ?? '-') . ' (' . ($row['location_qty'] ?? 0) . ')</td>                             
+                            <td>' . htmlspecialchars($row['location_full_id']) . '</td>                             
                         </tr>';
             }                                
             echo'   </tbody>
