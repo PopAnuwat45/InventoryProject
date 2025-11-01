@@ -75,7 +75,7 @@
 
         <!-- Section: Menu Buttons -->
         <div class="menu-section mb-4">
-            <h5 class="mb-3 fw-bold">เปิดใบสั่งสินค้า</h5>
+            <h5 class="mb-3 fw-bold">เปิดใบขายสินค้า</h5>
             <div class="row g-2">
                 <?php include('menu_buttons.php') ?>
             </div>

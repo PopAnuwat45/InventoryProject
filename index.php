@@ -1,19 +1,24 @@
 <?php
-        // connect to DB
+    // connect to DB
     include('server.php');
 
-    // ดึงข้อมูลสินค้า
-        $sql = "SELECT 
-            product.product_id_full,
-            product.product_name,
-            product.unit,
-            location.location_full_id
-        FROM product
-        LEFT JOIN location 
-            ON product.location_id = location.location_id
-        ORDER BY product.product_id_full, location.location_full_id";
 
-        $result = $conn->query($sql);
+    // ดึงข้อมูลสินค้า พร้อมคำนวณยอดคงเหลือ
+    $sql = "SELECT 
+    p.product_id_full,
+    p.product_name,
+    p.unit,
+    l.location_full_id,
+    IFNULL(SUM(CASE WHEN sm.movement_type = 'IN' THEN sm.movement_qty ELSE 0 END),0)
+    - IFNULL(SUM(CASE WHEN sm.movement_type = 'OUT' THEN sm.movement_qty ELSE 0 END),0) AS stock_balance
+    FROM product p
+    LEFT JOIN location l ON p.location_id = l.location_id
+    LEFT JOIN stock_movement sm ON p.product_id = sm.product_id
+    GROUP BY p.product_id
+    ORDER BY p.product_id_full, l.location_full_id";
+
+    $result = $conn->query($sql);
+
 
 ?>
 <!DOCTYPE html>
@@ -75,7 +80,7 @@
                 echo'   <tr>
                             <td>' . htmlspecialchars($row['product_id_full']) . '</td>
                             <td>' . htmlspecialchars($row['product_name']) . '</td>
-                            <td>รอข้อมูล</td>
+                            <td>' . htmlspecialchars($row['stock_balance']) . '</td>
                             <td>' . htmlspecialchars($row['unit']) . '</td>
                             <td>' . htmlspecialchars($row['location_full_id']) . '</td>                             
                         </tr>';

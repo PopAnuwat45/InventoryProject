@@ -1,50 +1,5 @@
 <?php
     include('server.php');
-
-    // ดึงปีและเดือนปัจจุบัน
-    $year = date('y'); // เช่น 25
-    $month = date('m'); // เช่น 10
-
-    // หาเลขล่าสุดของเดือนนี้
-    $sql_last_so = "
-        SELECT so_id, so_number
-        FROM sale_order
-        WHERE so_number LIKE 'SO{$year}{$month}-%'
-        ORDER BY so_id DESC
-        LIMIT 1
-    ";
-    $result_last_so = $conn->query($sql_last_so);
-
-    if ($result_last_so && $result_last_so->num_rows > 0) {
-        $row_last_so = $result_last_so->fetch_assoc();
-        $last_number = (int)substr($row_last_so['so_number'], -4);
-        $next_number = $last_number + 1;
-    } else {
-        $next_number = 1;
-    }
-
-    // วนลูปตรวจสอบไม่ให้เลขซ้ำ
-    do {
-        $new_so_number = "SO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
-        $sql_check = "SELECT COUNT(*) AS cnt FROM sale_order WHERE so_number = '$new_so_number'";
-        $result_check = $conn->query($sql_check);
-        $row_check = $result_check->fetch_assoc();
-        if ($row_check['cnt'] > 0) {
-            $next_number++;
-        } else {
-            break;
-        }
-    } while (true);
-
-    // หา so_id ใหม่ (ไม่ได้ AUTO_INCREMENT)
-    $sql_last_id = "SELECT so_id FROM sale_order ORDER BY so_id DESC LIMIT 1";
-    $result_last_id = $conn->query($sql_last_id);
-    if ($result_last_id && $result_last_id->num_rows > 0) {
-        $row_last_id = $result_last_id->fetch_assoc();
-        $new_so_id = $row_last_id['so_id'] + 1;
-    } else {
-        $new_so_id = 1;
-    }
 ?>
 
 <!DOCTYPE html>
@@ -84,22 +39,32 @@
         <!-- Section: Transaction -->
         <h5 class="mb-3 fw-bold">ประวัติการเคลื่อนไหวของสินค้า</h5>
         <!-- Section: Transaction -->
-        <div class="mb-3">
-            <label class="form-label">ค้นหารหัสสินค้า</label>
-            <form method="POST" action="">
-                <div class="input-group mb-3">
-                    <input type="text" name="search_product" class="form-control" placeholder="ใส่รหัสสินค้า เช่น P0001" required>
-                    <button class="btn btn-primary" type="submit">ค้นหา</button>
+        <form method="POST" action="">
+            <div class="mb-3">
+                <label class="form-label">ค้นหารหัสสินค้า</label>
+                <div class="product-search-wrapper" style="position: relative;">
+                    <input type="text" name="search_product" class="form-control product-search" placeholder="พิมพ์รหัสสินค้า เช่น P0001" autocomplete="off" required>
+                    <div class="product-list" style="position: absolute; z-index: 10; width: 100%; background: #fff; border: 1px solid #ddd; display: none;"></div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
 <?php
 if (isset($_POST['search_product'])) {
     $search = $_POST['search_product'];
 
     // ดึง product_id จาก product_id_full
-    $sql_product = "SELECT product_id, product_name, product_id_full FROM product WHERE product_id_full = ?";
+    $sql_product = "
+    SELECT 
+        p.product_id, 
+        p.product_id_full,
+        p.product_name, 
+        p.unit,
+        l.location_full_id
+    FROM product p
+    LEFT JOIN location l ON p.location_id = l.location_id
+    WHERE p.product_id_full = ?
+    ";
     $stmt_product = $conn->prepare($sql_product);
     $stmt_product->bind_param("s", $search);
     $stmt_product->execute();
@@ -110,17 +75,53 @@ if (isset($_POST['search_product'])) {
         $product_id = $product['product_id'];
         $product_name = $product['product_name'];
 
-        echo "<h5>ประวัติการเคลื่อนไหวของสินค้า: {$product['product_id_full']} - {$product_name}</h5>";
+        echo "<h5>สินค้า: {$product['product_id_full']} - {$product_name}</h5>";
+        echo "<h5>ตำแหน่งที่เก็บ: {$product['location_full_id']}</h5>";
 
-        // ดึงข้อมูล Stock Movement ของสินค้านี้
-        $sql_movement = "SELECT movement_date, movement_type, ref_type, ref_id, movement_qty, created_by
-                         FROM stock_movement
-                         WHERE product_id = ?
-                         ORDER BY movement_date ASC, movement_id ASC";
-        $stmt_movement = $conn->prepare($sql_movement);
-        $stmt_movement->bind_param("i", $product_id);
-        $stmt_movement->execute();
-        $result_movement = $stmt_movement->get_result();
+        // ดึงยอดคงเหลือสินค้าปัจจุบัน
+    $sql_balance = "SELECT 
+    IFNULL(SUM(CASE WHEN movement_type='IN' THEN movement_qty ELSE 0 END),0)
+    - IFNULL(SUM(CASE WHEN movement_type='OUT' THEN movement_qty ELSE 0 END),0) AS stock_balance
+    FROM stock_movement
+    WHERE product_id = ?
+    ";
+    $stmt_balance = $conn->prepare($sql_balance);
+    $stmt_balance->bind_param("i", $product_id);
+    $stmt_balance->execute();
+    $result_balance = $stmt_balance->get_result();
+    $row_balance = $result_balance->fetch_assoc();
+    $current_stock = $row_balance['stock_balance'];
+
+
+
+        // ดึงข้อมูล Stock Movement ของสินค้า
+    $sql_movement = "
+    SELECT 
+        sm.movement_date, 
+        sm.movement_type, 
+        sm.ref_type, 
+        sm.ref_id, 
+        sm.movement_qty, 
+        sm.created_by,
+        po.po_number,
+        so.so_number,
+        l.location_full_id
+    FROM stock_movement sm
+    LEFT JOIN purchase_order po 
+        ON (sm.ref_type = 'PO' AND sm.ref_id = po.po_id)
+    LEFT JOIN sale_order so 
+        ON (sm.ref_type = 'SO' AND sm.ref_id = so.so_id)
+    LEFT JOIN product p 
+        ON sm.product_id = p.product_id
+    LEFT JOIN location l 
+        ON p.location_id = l.location_id
+    WHERE sm.product_id = ?
+    ORDER BY sm.movement_date ASC, sm.movement_id ASC
+    ";
+    $stmt_movement = $conn->prepare($sql_movement);
+    $stmt_movement->bind_param("i", $product_id);
+    $stmt_movement->execute();
+    $result_movement = $stmt_movement->get_result();
 
         if ($result_movement->num_rows > 0) {
             echo '<div class="table-responsive">
@@ -131,24 +132,41 @@ if (isset($_POST['search_product'])) {
                                 <th>ประเภท</th>
                                 <th>อ้างอิง</th>
                                 <th>เลขใบ</th>
-                                <th>จำนวน</th>
+                                <th>รับเข้า</th>
+                                <th>เบิกออก</th>
                                 <th>ผู้ทำรายการ</th>
                             </tr>
                         </thead>
                         <tbody>';
             while ($row = $result_movement->fetch_assoc()) {
+
+                // ✅ เลือกเลขใบตามประเภท IN/OUT
+                $ref_number = ($row['movement_type'] === 'IN') ? $row['po_number'] : $row['so_number'];
+                if (empty($ref_number)) $ref_number = '-';
+
+                // ✅ แยกคอลัมน์รับเข้า / จ่ายออก
+                $qty_in  = ($row['movement_type'] === 'IN')  ? $row['movement_qty'] : '';
+                $qty_out = ($row['movement_type'] === 'OUT') ? $row['movement_qty'] : '';
+
+                // ✅ ถ้าเป็น OUT ให้ใส่เครื่องหมายลบหน้า qty
+                $qty_display = ($row['movement_type'] === 'OUT') ? '-' . $row['movement_qty'] : $row['movement_qty'];
+
                 echo "<tr>
                         <td>{$row['movement_date']}</td>
                         <td>{$row['movement_type']}</td>
                         <td>{$row['ref_type']}</td>
-                        <td>{$row['ref_id']}</td>
-                        <td>{$row['movement_qty']}</td>
+                        <td>{$ref_number}</td>
+                        <td class='text-success'>{$qty_in}</td>
+                        <td class='text-danger'>{$qty_out}</td>
                         <td>{$row['created_by']}</td>
                       </tr>";
             }
             echo '    </tbody>
                     </table>
                   </div>';
+            
+            echo "<p class='fw-bold mt-2'>ยอดคงเหลือล่าสุด: {$current_stock} {$product['unit']}</p>";
+
         } else {
             echo "<p>ยังไม่มีการเคลื่อนไหวของสินค้านี้</p>";
         }
@@ -200,24 +218,25 @@ if (isset($_POST['search_product'])) {
             }
         });
 
-        // เมื่อคลิกเลือกรายการที่ค้นเจอ
-        $(document).on("click", ".product-item", function(){
-            let product_id = $(this).data("id");
-            let product_code = $(this).data("code");
-            let product_name = $(this).data("name");
-            let unit = $(this).data("unit");
+    // เมื่อคลิกเลือกรายการที่ค้นเจอ
+    $(document).on("click", ".product-item", function(){
+        let product_id = $(this).data("id");
+        let product_code = $(this).data("code");
+        let product_name = $(this).data("name");
+        let unit = $(this).data("unit");
 
-            let parent = $(this).closest(".product-list").parent();
-            parent.find(".product-search").val(product_code);
-            parent.find(".product-id").val(product_id);
-            parent.find(".unit-field").val(unit);
+        let parent = $(this).closest(".product-list").parent();
 
-            // ✅ หา input ชื่อสินค้าในแถวเดียวกัน แล้วใส่ชื่อ
-            parent.closest('tr').find('input[name="so_name[]"]').val(product_name);
-            parent.closest('tr').find('input[name="unit[]"]').val(unit);
+    // ใส่รหัสสินค้าลงช่องค้นหา
+        parent.find(".product-search").val(product_code);
 
-            $(this).parent().hide(); // ซ่อนผลลัพธ์
-        });
+    // ซ่อนกล่องรายการ
+        $(this).parent().hide();
+
+    // ✅ ส่งฟอร์มอัตโนมัติหลังจากเลือกสินค้า
+        parent.closest("form").submit();
+    });
+
     });
     </script>
 
