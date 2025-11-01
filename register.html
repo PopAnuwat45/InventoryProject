@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ใช้ Bootstrap จากไฟล์ -->
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+
+  <!-- Google font -->
+ 	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+  <style>
+    body {
+      background: #15161D;
+      color: #e9e9ea;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+    .register-panel {
+      width: 100%;
+      max-width: 420px;
+      background: #1a1b1e;
+      border: 1px solid #2a2c31;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+    .register-logo {
+      text-align: center;
+      padding: 28px 24px 10px;
+      background: linear-gradient(180deg, #1f2125 0%, #1a1b1e 100%);
+      border-bottom: 1px solid #2a2c31;
+    }
+    .register-logo img {
+      max-width: 120px;
+      height: auto;
+      display: inline-block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.35));
+    }
+    .register-body {
+      padding: 22px 24px 26px;
+    }
+    .form-control {
+      background: #121316;
+      border: 1px solid #2c2f36;
+      color: #e9e9ea;
+      height: 42px;
+      border-radius: 8px;
+    }
+    .form-control:focus {
+      background: #15171b;
+      border-color: #ff0040;
+      box-shadow: 0 0 0 2px rgba(190, 0, 0, 0.61);
+      color: #fff;
+    }
+    .control-label {
+      color: #c7c8ca;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: #FF0000;
+      border-color: #FF0000;
+      box-shadow: 0 0 0 2px rgba(190, 0, 0, 0.61);
+      border-radius: 8px;
+      height: 42px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: #cc0000d5;
+      border-color: #cc0000d5;
+    }
+
+    .btn-primary:active {
+      background: #cc0000d5 !important;
+      border-color: #cc0000d5 !important;
+    }
+    .btn-secondary {
+      background: #3a3c41;
+      border-color: #3a3c41;
+      border-radius: 8px;
+      height: 42px;
+      font-weight: 600;
+      color: #e9e9ea;
+      display: flex;
+      justify-content: center; /* กึ่งกลางแนวนอน */
+      align-items: center;     /* กึ่งกลางแนวตั้ง */
+    }
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+      background: #505359;
+      border-color: #505359;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-panel">
+    <!-- โลโก้ -->
+    <div class="register-logo">
+      <img src="./img/logo.jpg" alt="">
+    </div>
+
+    <div class="register-body">
+      <form action="register_db.php" method="post" autocomplete="off">
+        <div class="form-group">
+          <label for="username" class="control-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="control-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <br>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" name="sub">สมัครสมาชิก</button>
+        <a href="login.html" class="btn btn-secondary btn-block">ไปหน้าเข้าสู่ระบบ</a>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Bootstrap JS -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
