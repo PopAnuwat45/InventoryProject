@@ -30,14 +30,14 @@
 
         <!-- Section: Menu Buttons -->
         <div class="menu-section mb-4">
-            <h5 class="mb-3 fw-bold">เปิดใบสั่งสินค้า</h5>
+            <h5 class="mb-3 fw-bold">ประวัติการเคลื่อนไหว</h5>
             <div class="row g-2">
                 <?php include('menu_buttons.php') ?>
             </div>
         </div>
 
         <!-- Section: Transaction -->
-        <h5 class="mb-3 fw-bold">ประวัติการเคลื่อนไหวของสินค้า</h5>
+        <h5 class="mb-3 fw-bold">ดูประวัติการเคลื่อนไหวของสินค้า</h5>
         <!-- Section: Transaction -->
         <form method="POST" action="">
             <div class="mb-3">
@@ -131,7 +131,7 @@ if (isset($_POST['search_product'])) {
                                 <th>วันที่</th>
                                 <th>ประเภท</th>
                                 <th>อ้างอิง</th>
-                                <th>เลขใบ</th>
+                                <th>เลขใบทำการ</th>
                                 <th>รับเข้า</th>
                                 <th>เบิกออก</th>
                                 <th>ผู้ทำรายการ</th>
