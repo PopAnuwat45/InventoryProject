@@ -75,8 +75,8 @@ if (isset($_POST['search_product'])) {
         $product_id = $product['product_id'];
         $product_name = $product['product_name'];
 
-        echo "<h5>สินค้า: {$product['product_id_full']} - {$product_name}</h5>";
-        echo "<h5>ตำแหน่งที่เก็บ: {$product['location_full_id']}</h5>";
+        echo "<h5>สินค้า: <span class='fw-bold'>{$product['product_id_full']} - {$product_name}</span></h5>";
+        echo "<h5>ตำแหน่งที่เก็บ: <span class='fw-bold'>{$product['location_full_id']}</span></h5>";
 
         // ดึงยอดคงเหลือสินค้าปัจจุบัน
     $sql_balance = "SELECT 
