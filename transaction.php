@@ -81,109 +81,87 @@
             </div>
         </div>
 
-        <!-- Section: Create SO -->
-        <h5 class="mb-3 fw-bold">สร้างใบสั่งขายสินค้า (Sale Order)</h5>
-
-        <form action="save_so.php" method="POST">
-
-        <!-- รหัสใบ SO -->
+        <!-- Section: Transaction -->
+        <h5 class="mb-3 fw-bold">ประวัติการเคลื่อนไหวของสินค้า</h5>
+        <!-- Section: Transaction -->
         <div class="mb-3">
-            <label for="so_number" class="form-label">รหัสใบสั่งขาย (SO Number)</label>
-            <input type="text" name="so_number" id="so_number" class="form-control" 
-                value="<?php echo $new_so_number; ?>" readonly>
-            <input type="hidden" name="so_id" value="<?php echo $new_so_id; ?>">
+            <label class="form-label">ค้นหารหัสสินค้า</label>
+            <form method="POST" action="">
+                <div class="input-group mb-3">
+                    <input type="text" name="search_product" class="form-control" placeholder="ใส่รหัสสินค้า เช่น P0001" required>
+                    <button class="btn btn-primary" type="submit">ค้นหา</button>
+                </div>
+            </form>
         </div>
 
-        <!-- เลือกลูกค้า -->
-        <div class="mb-3">
-            <label for="customer_name" class="form-label">ลูกค้า</label>
-            <div class="customer-search-wrapper" style="position: relative;">
-                <input type="text" name="customer_name" id="customer_name" class="form-control customer-search" 
-                    placeholder="พิมพ์ชื่อหรือรหัสลูกค้า" autocomplete="off" required>
-                <div class="customer-list"></div>
+<?php
+if (isset($_POST['search_product'])) {
+    $search = $_POST['search_product'];
 
+    // ดึง product_id จาก product_id_full
+    $sql_product = "SELECT product_id, product_name, product_id_full FROM product WHERE product_id_full = ?";
+    $stmt_product = $conn->prepare($sql_product);
+    $stmt_product->bind_param("s", $search);
+    $stmt_product->execute();
+    $result_product = $stmt_product->get_result();
+    
+    if ($result_product->num_rows > 0) {
+        $product = $result_product->fetch_assoc();
+        $product_id = $product['product_id'];
+        $product_name = $product['product_name'];
 
-                <input type="hidden" name="customer_id" class="customer-id">
-            </div>
-        </div>
+        echo "<h5>ประวัติการเคลื่อนไหวของสินค้า: {$product['product_id_full']} - {$product_name}</h5>";
 
-        <!-- วันที่ SO -->
-        <div class="mb-3">
-            <label for="so_date" class="form-label">วันที่</label>
-            <input type="date" name="so_date" id="so_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
-        </div>
+        // ดึงข้อมูล Stock Movement ของสินค้านี้
+        $sql_movement = "SELECT movement_date, movement_type, ref_type, ref_id, movement_qty, created_by
+                         FROM stock_movement
+                         WHERE product_id = ?
+                         ORDER BY movement_date ASC, movement_id ASC";
+        $stmt_movement = $conn->prepare($sql_movement);
+        $stmt_movement->bind_param("i", $product_id);
+        $stmt_movement->execute();
+        $result_movement = $stmt_movement->get_result();
 
-        <!-- ตารางรายการสินค้า -->
-        <div class="mb-3">
-            <label class="form-label">รายการสินค้า</label>
-            <table class="table table-bordered table-striped" id="so_items_table">
-                <thead>
-                    <tr>
-                        <th>รหัสสินค้า</th>
-                        <th>ชื่อสินค้า</th>
-                        <th>จำนวน</th>
-                        <th>ราคาต่อหน่วย</th>
-                        <th>หน่วยนับ</th>
-                        <th>ลบ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="product-search-wrapper" style="position: relative;">
-                                <input type="text" name="product_code[]" class="form-control product-search" placeholder="พิมพ์รหัสสินค้า เช่น P0001" autocomplete="off" required>
-                                <div class="product-list"></div>
-                                <input type="hidden" name="product_id[]" class="product-id">
-                            </div>
-                        </td>
-                        <td><input type="text" name="so_name[]" class="form-control" required readonly></td>
-                        <td><input type="number" name="so_qty[]" class="form-control" min="1" required></td>
-                        <td><input type="number" name="so_unit_price[]" class="form-control" min="0" step="0.01" required></td>
-                        <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
-                        <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="button" class="btn btn-outline-success btn-sm" id="add_item_btn">➕ เพิ่มสินค้า</button>
-        </div>
-
-        <div class="mb-3 text-end">
-            <button type="submit" class="btn btn-primary">บันทึกใบสั่งขาย</button>
-        </div>
-    </form>
-
-<!-- JS เพิ่ม/ลบแถวสินค้า -->
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-    const addBtn = document.getElementById('add_item_btn');
-    const tableBody = document.querySelector('#so_items_table tbody');
-
-    addBtn.addEventListener('click', function(){
-        const firstRow = tableBody.querySelector('tr');
-        const newRow = firstRow.cloneNode(true);
-        newRow.querySelectorAll('input').forEach(input => input.value = '');
-        tableBody.appendChild(newRow);
-    });
-
-    tableBody.addEventListener('click', function(e){
-        if(e.target.classList.contains('remove-row')){
-            const rows = tableBody.querySelectorAll('tr');
-            if(rows.length > 1){
-                e.target.closest('tr').remove();
-            } else {
-                alert('ต้องมีสินค้าอย่างน้อย 1 รายการ');
+        if ($result_movement->num_rows > 0) {
+            echo '<div class="table-responsive">
+                    <table class="table table-hover align-middle table-striped">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>วันที่</th>
+                                <th>ประเภท</th>
+                                <th>อ้างอิง</th>
+                                <th>เลขใบ</th>
+                                <th>จำนวน</th>
+                                <th>ผู้ทำรายการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+            while ($row = $result_movement->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$row['movement_date']}</td>
+                        <td>{$row['movement_type']}</td>
+                        <td>{$row['ref_type']}</td>
+                        <td>{$row['ref_id']}</td>
+                        <td>{$row['movement_qty']}</td>
+                        <td>{$row['created_by']}</td>
+                      </tr>";
             }
+            echo '    </tbody>
+                    </table>
+                  </div>';
+        } else {
+            echo "<p>ยังไม่มีการเคลื่อนไหวของสินค้านี้</p>";
         }
-    });
 
-    tableBody.addEventListener('change', function(e){
-        if(e.target.tagName === 'SELECT'){
-            const unitInput = e.target.closest('tr').querySelector('input[name="so_unit[]"]');
-            unitInput.value = e.target.selectedOptions[0].dataset.unit || '';
-        }
-    });
-});
-</script>
+        $stmt_movement->close();
+    } else {
+        echo "<p>ไม่พบรหัสสินค้านี้</p>";
+    }
+
+    $stmt_product->close();
+}
+?>
+
 
         
 

@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // ===== Insert Stock Movement =====
         $sql_movement = "INSERT INTO stock_movement 
-            (product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-            VALUES (?, NOW(), 'IN', 'PO', ?, ?, ?)";
+            (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
+            VALUES (?, ?, NOW(), 'IN', 'PO', ?, ?, ?)";
         $stmt_movement = $conn->prepare($sql_movement);
 
         for ($i = 0; $i < count($product_ids); $i++) {
@@ -48,8 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_item->bind_param("iiiid", $po_item_id, $po_id, $product_id, $qty, $unit_price);
             $stmt_item->execute();
 
+            // ===== สร้าง movement_id =====
+            $result_last_move = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
+            $row_last_move = $result_last_move->fetch_assoc();
+            $movement_id = $row_last_move['last_id'] ? $row_last_move['last_id'] + 1 : 1;
+
             // Insert Stock Movement
-            $stmt_movement->bind_param("iiis", $product_id, $po_id, $qty, $created_by);
+            $stmt_movement->bind_param("iiiis", $movement_id, $product_id, $po_id, $qty, $created_by);
             $stmt_movement->execute();
         }
 
