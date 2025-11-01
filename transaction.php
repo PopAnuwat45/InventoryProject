@@ -165,7 +165,7 @@ if (isset($_POST['search_product'])) {
                     </table>
                   </div>';
             
-            echo "<p class='fw-bold mt-2'>ยอดคงเหลือล่าสุด: {$current_stock} {$product['unit']}</p>";
+            echo "<h5><p class='fw-bold mt-2'>ยอดคงเหลือล่าสุด: {$current_stock} {$product['unit']}</p></h5>";
 
         } else {
             echo "<p>ยังไม่มีการเคลื่อนไหวของสินค้านี้</p>";
