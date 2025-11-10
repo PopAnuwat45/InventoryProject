@@ -22,3 +22,6 @@
                 <div class="col-6 col-md-3">
                     <a href ="transaction.php" class="btn btn-outline-primary w-100">📜 ประวัติการเคลื่อนไหว</a>
                 </div>
+                <div class="col-6 col-md-3">
+                    <a href ="#" class="btn btn-outline-primary w-100">📜 ทดสอบเพิ่มปุ่ม</a>
+                </div>
