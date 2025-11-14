@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $po_qtys = $_POST['po_qty'];               // array
     $po_unit_prices = $_POST['po_unit_price']; // array
 
-    $created_by = 'admin'; // ชั่วคราว
+    $created_by = $_POST['created_by'];
 
     // ===== Insert ข้อมูลลง purchase_order =====
     $sql_po = "INSERT INTO purchase_order (po_id, po_number, po_date, supplier_id, created_by) 

@@ -1,6 +1,8 @@
 <?php
 include('server.php');
 
+    $created_by = 'admin'; // ชั่วคราว
+
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25
     $month = date('m'); // เช่น 10
@@ -47,6 +49,18 @@ include('server.php');
     } else {
         $new_po_id = 1;
     }
+
+    $shipping_addresses = [
+        "head_office" => [
+            "name" => "สำนักงานใหญ่",
+            "address" => "123/45 ถนนสุขุมวิท กรุงเทพฯ 10110"
+        ],
+        "warehouse" => [
+            "name" => "คลังสินค้า",
+            "address" => "88/99 ถนนกาญจนาภิเษก นนทบุรี 11000"
+        ]
+    ];
+
 ?>
 
 <!DOCTYPE html>
@@ -88,6 +102,13 @@ include('server.php');
 
     <form action="save_po.php" method="POST">
 
+    <!-- ผู้ทำรายการ -->
+    <div class="mb-3">
+        <label for="create_by" class="form-label">ผู้ทำรายการ</label>
+        <input type="text" name="created_by" id="created_by" class="form-control" 
+            value="<?php echo $created_by; ?>" readonly>
+    </div>
+    
     <!-- รหัสใบสั่งซื้อ -->
     <div class="mb-3">
         <label for="po_number" class="form-label">รหัสใบสั่งซื้อ (PO Number)</label>
@@ -100,7 +121,7 @@ include('server.php');
     <div class="mb-3">
         <label for="supplier_id" class="form-label">ผู้จำหน่าย</label>
         <select name="supplier_id" id="supplier_id" class="form-select" required>
-            <option value="">-- เลือกผู้จำหน่าย --</option>
+            <option value="" selected disabled>-- เลือกผู้จำหน่าย --</option>
             <?php
             $sql_supplier = "SELECT supplier_id, supplier_name FROM supplier ORDER BY supplier_name ASC";
             $result_supplier = $conn->query($sql_supplier);
@@ -110,6 +131,26 @@ include('server.php');
                 }
             }
             ?>
+        </select>
+    </div>
+
+    <!-- เลือกวิธีการชำระเงิน -->
+    <div class="mb-3">
+        <label for="payment" class="form-label">วิธีการชำระเงิน</label> 
+        <select name="payment" id="payment" class="form-select" require>
+            <option value="" selected disabled>-- กรุณาเลือกวิธีการชำระเงิน --</option>
+            <option value="cash">เงินสด</option>
+            <option value="credit">เครดิต 30 วัน</option>
+        </select>
+    </div>
+
+    <!-- เลือกที่อยู่การจัดส่ง -->
+    <div class="mb-3">
+        <label for="shipping_address" class="shipping_address">เลือกที่อยู่การจัดส่ง</label> 
+        <select name="shipping_address" id="shipping_address" class="form-select" require>
+            <option value="" selected disabled>-- กรุณาเลือกที่อยู่การจัดส่ง --</option>
+            <option value="head_office">สำนักงานใหญ่</option>
+            <option value="warehouse">คลังสินค้า</option>
         </select>
     </div>
 
