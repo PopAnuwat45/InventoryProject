@@ -90,7 +90,7 @@ include('server.php');
         <!-- Section: Create PO -->
     <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
 
-    <form action="save_po.php" method="POST">
+    <form action="save_gr.php" method="POST">
 
     <!-- ผู้ทำรายการ -->
     <div class="mb-3">
@@ -99,18 +99,20 @@ include('server.php');
             value="<?php echo $created_by; ?>" readonly>
     </div>
     
-    <!-- เลขที่ใบรับสินค้า -->
-    <div class="mb-3">
-        <label for="gr_number" class="form-label">เลขที่ใบรับสินค้า (GR Number)</label>
-        <input type="text" name="gr_number" id="gr_number" class="form-control" 
-            value="<?php echo $new_gr_number; ?>" readonly>
-        <input type="hidden" name="gr_id" value="<?php echo $new_gr_id; ?>">
-    </div>
+    <div class ="row">
+        <!-- เลขที่ใบรับสินค้า -->
+        <div class="mb-3 col-md-5">
+            <label for="gr_number" class="form-label">เลขที่ใบรับสินค้า (GR Number)</label>
+            <input type="text" name="gr_number" id="gr_number" class="form-control" 
+                value="<?php echo $new_gr_number; ?>" readonly>
+            <input type="hidden" name="gr_id" value="<?php echo $new_gr_id; ?>">
+        </div>
 
-    <!-- วันที่ GR -->
-    <div class="mb-3 col-md-4">
-        <label for="gr_date" class="form-label">วันที่</label>
-        <input type="date" name="gr_date" id="gr_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+        <!-- วันที่ GR -->
+        <div class="mb-3 col-md-5">
+            <label for="gr_date" class="form-label">วันที่</label>
+            <input type="date" name="gr_date" id="gr_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+        </div>
     </div>
 
     <!-- เลือกซัพพลายเออร์ -->
@@ -130,18 +132,20 @@ include('server.php');
         </select>
     </div>
 
-    <!-- เลขที่เอกสารอ้างอิง -->
-    <div class="mb-3">
-        <label for="ref_doc_number" class="form-label">เลขที่เอกสารอ้างอิง</label>
-        <input type="text" name="ref_doc_number" id="ref_doc_number" class="form-control" placeholder ="เลขที่ใบ INVOICE/เลขที่ใบส่งของ">
-    </div>
     
-    <!-- วันที่เอกสารอ้างอิง -->
-    <div class="mb-3 col-md-4" >
-        <label for="ref_doc_date" class="form-label">วันที่เอกสารอ้างอิง</label>
-        <input type="date" name="ref_doc_date" id="ref_doc_date" class="form-control">
-    </div>
+    <div class="row">
+        <!-- เลขที่เอกสารอ้างอิง -->
+        <div class="mb-3 col-md-5">
+            <label for="ref_doc_number" class="form-label">เลขที่เอกสารอ้างอิง</label>
+            <input type="text" name="ref_doc_number" id="ref_doc_number" class="form-control" placeholder ="เลขที่ใบ INVOICE/เลขที่ใบส่งของ">
+        </div>
     
+        <!-- วันที่เอกสารอ้างอิง -->
+        <div class="mb-3 col-md-5" >
+            <label for="ref_doc_date" class="form-label">วันที่เอกสารอ้างอิง</label>
+            <input type="date" name="ref_doc_date" id="ref_doc_date" class="form-control">
+        </div>
+    </div>
 
     
 
