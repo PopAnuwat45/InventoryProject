@@ -91,14 +91,14 @@ include('server.php');
 
         <!-- Section: Menu Buttons -->
         <div class="menu-section mb-4">
-            <h5 class="mb-3 fw-bold">เปิดใบสั่งสินค้า</h5>
+            <h5 class="mb-3 fw-bold">รับสินค้าเข้า</h5>
             <div class="row g-2">
                 <?php include('menu_buttons.php')?>
             </div>
         </div>
 
         <!-- Section: Create PO -->
-    <h5 class="mb-3 fw-bold">สร้างใบสั่งซื้อสินค้า (Purchase Order)</h5>
+    <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
 
     <form action="save_po.php" method="POST">
 
@@ -109,12 +109,18 @@ include('server.php');
             value="<?php echo $created_by; ?>" readonly>
     </div>
     
-    <!-- รหัสใบสั่งซื้อ -->
+    <!-- เลขที่ใบรับสินค้า -->
     <div class="mb-3">
-        <label for="po_number" class="form-label">รหัสใบสั่งซื้อ (PO Number)</label>
+        <label for="po_number" class="form-label">เลขที่ใบรับสินค้า (GR Number)</label>
         <input type="text" name="po_number" id="po_number" class="form-control" 
             value="<?php echo $new_po_number; ?>" readonly>
         <input type="hidden" name="po_id" value="<?php echo $new_po_id; ?>">
+    </div>
+
+    <!-- วันที่ GR -->
+    <div class="mb-3 col-md-4">
+        <label for="gr_date" class="form-label">วันที่</label>
+        <input type="date" name="gr_date" id="gr_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
     </div>
 
     <!-- เลือกซัพพลายเออร์ -->
@@ -134,31 +140,20 @@ include('server.php');
         </select>
     </div>
 
-    <!-- เลือกวิธีการชำระเงิน -->
+    <!-- เลขที่เอกสารอ้างอิง -->
     <div class="mb-3">
-        <label for="payment" class="form-label">วิธีการชำระเงิน</label> 
-        <select name="payment" id="payment" class="form-select" require>
-            <option value="" selected disabled>-- กรุณาเลือกวิธีการชำระเงิน --</option>
-            <option value="cash">เงินสด</option>
-            <option value="credit">เครดิต 30 วัน</option>
-        </select>
+        <label for="ref_doc_number" class="form-label">เลขที่เอกสารอ้างอิง</label>
+        <input type="text" name="ref_doc_number" id="ref_doc_number" class="form-control" placeholder ="เลขที่ใบ INVOICE/เลขที่ใบส่งของ">
     </div>
+    
+    <!-- วันที่เอกสารอ้างอิง -->
+    <div class="mb-3 col-md-4" >
+        <label for="ref_doc_date" class="form-label">วันที่เอกสารอ้างอิง</label>
+        <input type="date" name="ref_doc_date" id="ref_doc_date" class="form-control">
+    </div>
+    
 
-    <!-- เลือกที่อยู่การจัดส่ง -->
-    <div class="mb-3">
-        <label for="shipping_address" class="shipping_address">เลือกที่อยู่การจัดส่ง</label> 
-        <select name="shipping_address" id="shipping_address" class="form-select" require>
-            <option value="" selected disabled>-- กรุณาเลือกที่อยู่การจัดส่ง --</option>
-            <option value="head_office">สำนักงานใหญ่</option>
-            <option value="warehouse">คลังสินค้า</option>
-        </select>
-    </div>
-
-    <!-- วันที่ PO -->
-    <div class="mb-3">
-        <label for="po_date" class="form-label">วันที่</label>
-        <input type="date" name="po_date" id="po_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
-    </div>
+    
 
     <!-- ตารางรายการสินค้า -->
     <div class="mb-3">
@@ -169,7 +164,6 @@ include('server.php');
                     <th>รหัสสินค้า</th>
                     <th>ชื่อสินค้า</th>
                     <th>จำนวน</th>
-                    <th>ราคาต่อหน่วย</th>
                     <th>หน่วยนับ</th>
                     <th>ลบ</th>
                 </tr>
@@ -187,7 +181,6 @@ include('server.php');
                     </td>
                     <td><input type="text" name="po_name[]" class="form-control" require readonly></td>
                     <td><input type="number" name="po_qty[]" class="form-control" min="1" required></td>
-                    <td><input type="number" name="po_unit_price[]" class="form-control" min="0" step="0.01" required></td>
                     <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
                     <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                 </tr>
