@@ -103,14 +103,14 @@ if (isset($_POST['search_product'])) {
         sm.ref_id, 
         sm.movement_qty, 
         sm.created_by,
-        po.po_number,
-        so.so_number,
+        gr.gr_number,
+        gi.gi_number,
         l.location_full_id
     FROM stock_movement sm
-    LEFT JOIN purchase_order po 
-        ON (sm.ref_type = 'PO' AND sm.ref_id = po.po_id)
-    LEFT JOIN sale_order so 
-        ON (sm.ref_type = 'SO' AND sm.ref_id = so.so_id)
+    LEFT JOIN goods_receipt gr 
+        ON (sm.ref_type = 'GR' AND sm.ref_id = gr.gr_id)
+    LEFT JOIN goods_issue gi 
+        ON (sm.ref_type = 'GI' AND sm.ref_id = gi.gi_id)
     LEFT JOIN product p 
         ON sm.product_id = p.product_id
     LEFT JOIN location l 

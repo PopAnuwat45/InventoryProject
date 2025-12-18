@@ -11,7 +11,7 @@ include('server.php');
     $sql_last_gr = "
         SELECT gr_id, gr_number 
         FROM goods_receipt 
-        WHERE gr_number LIKE 'PO{$year}{$month}-%' 
+        WHERE gr_number LIKE 'GR{$year}{$month}-%' 
         ORDER BY gr_id DESC 
         LIMIT 1
     ";
@@ -87,7 +87,7 @@ include('server.php');
             </div>
         </div>
 
-        <!-- Section: Create PO -->
+        <!-- Section: Create GR -->
     <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
 
     <form action="save_gr.php" method="POST">
@@ -114,24 +114,6 @@ include('server.php');
             <input type="date" name="gr_date" id="gr_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
         </div>
     </div>
-
-    <!-- เลือกซัพพลายเออร์ -->
-    <div class="mb-3">
-        <label for="supplier_id" class="form-label">ผู้จำหน่าย</label>
-        <select name="supplier_id" id="supplier_id" class="form-select" required>
-            <option value="" selected disabled>-- เลือกผู้จำหน่าย --</option>
-            <?php
-            $sql_supplier = "SELECT supplier_id, supplier_name FROM supplier ORDER BY supplier_name ASC";
-            $result_supplier = $conn->query($sql_supplier);
-            if($result_supplier->num_rows > 0){
-                while($row_supplier = $result_supplier->fetch_assoc()){
-                    echo '<option value="'.$row_supplier['supplier_id'].'">'.htmlspecialchars($row_supplier['supplier_name']).'</option>';
-                }
-            }
-            ?>
-        </select>
-    </div>
-
     
     <div class="row">
         <!-- เลขที่เอกสารอ้างอิง -->
@@ -152,7 +134,7 @@ include('server.php');
     <!-- ตารางรายการสินค้า -->
     <div class="mb-3">
         <label class="form-label">รายการสินค้า</label>
-        <table class="table table-bordered table-striped" id="po_items_table">
+        <table class="table table-bordered table-striped" id="gr_items_table">
             <thead>
                 <tr>
                     <th>รหัสสินค้า</th>
@@ -173,8 +155,8 @@ include('server.php');
                         <input type="hidden" name="product_id[]" class="product-id">
                         </div>
                     </td>
-                    <td><input type="text" name="po_name[]" class="form-control" require readonly></td>
-                    <td><input type="number" name="po_qty[]" class="form-control" min="1" required></td>
+                    <td><input type="text" name="gr_name[]" class="form-control" require readonly></td>
+                    <td><input type="number" name="gr_qty[]" class="form-control" min="1" required></td>
                     <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
                     <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                 </tr>
@@ -193,7 +175,7 @@ include('server.php');
 <script>
 document.addEventListener('DOMContentLoaded', function(){
     const addBtn = document.getElementById('add_item_btn');
-    const tableBody = document.querySelector('#po_items_table tbody');
+    const tableBody = document.querySelector('#gr_items_table tbody');
 
     addBtn.addEventListener('click', function(){
         const firstRow = tableBody.querySelector('tr');
@@ -215,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     tableBody.addEventListener('change', function(e){
         if(e.target.tagName === 'SELECT'){
-            const unitInput = e.target.closest('tr').querySelector('input[name="po_unit[]"]');
+            const unitInput = e.target.closest('tr').querySelector('input[name="gr_unit[]"]');
             unitInput.value = e.target.selectedOptions[0].dataset.unit || '';
         }
     });
@@ -272,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function(){
             parent.find(".unit-field").val(unit);
 
             // ✅ หา input ชื่อสินค้าในแถวเดียวกัน แล้วใส่ชื่อ
-            parent.closest('tr').find('input[name="po_name[]"]').val(product_name);
+            parent.closest('tr').find('input[name="gr_name[]"]').val(product_name);
             parent.closest('tr').find('input[name="unit[]"]').val(unit);
 
             $(this).parent().hide(); // ซ่อนผลลัพธ์

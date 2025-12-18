@@ -94,18 +94,6 @@
             <input type="hidden" name="so_id" value="<?php echo $new_so_id; ?>">
         </div>
 
-        <!-- เลือกลูกค้า -->
-        <div class="mb-3">
-            <label for="customer_name" class="form-label">ลูกค้า</label>
-            <div class="customer-search-wrapper" style="position: relative;">
-                <input type="text" name="customer_name" id="customer_name" class="form-control customer-search" 
-                    placeholder="พิมพ์ชื่อหรือรหัสลูกค้า" autocomplete="off" required>
-                <div class="customer-list"></div>
-
-
-                <input type="hidden" name="customer_id" class="customer-id">
-            </div>
-        </div>
 
         <!-- วันที่ SO -->
         <div class="mb-3">
