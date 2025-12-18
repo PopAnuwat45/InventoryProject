@@ -7,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $gr_id = $_POST['gr_id'];
     $gr_number = $_POST['gr_number'];
     $gr_date = $_POST['gr_date'];
-    $supplier_id = $_POST['supplier_id'];
 
     $ref_doc_number = $_POST['ref_doc_number'];
     $ref_doc_date = $_POST['ref_doc_date'];
@@ -18,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $created_by = $_POST['created_by'];
 
     // ===== Insert ข้อมูลลง goods_receipt =====
-    $sql_gr = "INSERT INTO goods_receipt (gr_id, gr_number, gr_date, supplier_id, ref_doc_number, ref_doc_date, created_by) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql_gr = "INSERT INTO goods_receipt (gr_id, gr_number, gr_date, ref_doc_number, ref_doc_date, created_by) 
+            VALUES (?, ?, ?, ?, ?, ?)";
     $stmt_gr = $conn->prepare($sql_gr);
-    $stmt_gr->bind_param("ississs", $gr_id, $gr_number, $gr_date, $supplier_id, $ref_doc_number, $ref_doc_date, $created_by);
+    $stmt_gr->bind_param("isssss", $gr_id, $gr_number, $gr_date, $ref_doc_number, $ref_doc_date, $created_by);
 
     if ($stmt_gr->execute()) {
 
