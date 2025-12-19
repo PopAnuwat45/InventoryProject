@@ -6,18 +6,18 @@
     $month = date('m'); // เช่น 10
 
     // หาเลขล่าสุดของเดือนนี้
-    $sql_last_so = "
-        SELECT so_id, so_number
-        FROM sale_order
-        WHERE so_number LIKE 'SO{$year}{$month}-%'
-        ORDER BY so_id DESC
+    $sql_last_gi = "
+        SELECT gi_id, gi_number
+        FROM goods_issue
+        WHERE gi_number LIKE 'GI{$year}{$month}-%'
+        ORDER BY gi_id DESC
         LIMIT 1
     ";
-    $result_last_so = $conn->query($sql_last_so);
+    $result_last_gi = $conn->query($sql_last_gi);
 
-    if ($result_last_so && $result_last_so->num_rows > 0) {
-        $row_last_so = $result_last_so->fetch_assoc();
-        $last_number = (int)substr($row_last_so['so_number'], -4);
+    if ($result_last_gi && $result_last_gi->num_rows > 0) {
+        $row_last_gi = $result_last_gi->fetch_assoc();
+        $last_number = (int)substr($row_last_gi['gi_number'], -4);
         $next_number = $last_number + 1;
     } else {
         $next_number = 1;
