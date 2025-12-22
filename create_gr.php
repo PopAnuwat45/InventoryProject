@@ -110,7 +110,7 @@ include('server.php');
 
         <!-- วันที่ GR -->
         <div class="mb-3 col-md-5">
-            <label for="gr_date" class="form-label">วันที่</label>
+            <label for="gr_date" class="form-label">วันที่ใบรับสินค้า</label>
             <input type="date" name="gr_date" id="gr_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
         </div>
     </div>

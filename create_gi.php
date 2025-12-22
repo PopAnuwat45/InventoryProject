@@ -1,6 +1,8 @@
 <?php
     include('server.php');
 
+    $created_by = 'admin'; // ชั่วคราว
+    
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25
     $month = date('m'); // เช่น 10
@@ -75,42 +77,64 @@
 
         <!-- Section: Menu Buttons -->
         <div class="menu-section mb-4">
-            <h5 class="mb-3 fw-bold">เปิดใบขายสินค้า</h5>
+            <h5 class="mb-3 fw-bold">เบิกสินค้าออก</h5>
             <div class="row g-2">
                 <?php include('menu_buttons.php') ?>
             </div>
         </div>
 
-        <!-- Section: Create SO -->
-        <h5 class="mb-3 fw-bold">สร้างใบสั่งขายสินค้า (Sale Order)</h5>
+        <!-- Section: Create GI -->
+        <h5 class="mb-3 fw-bold">ทำรายการเบิกสินค้าออก (Goods_Issue)</h5>
 
         <form action="save_so.php" method="POST">
 
-        <!-- รหัสใบ SO -->
+        <!-- ผู้ทำรายการ -->
         <div class="mb-3">
-            <label for="so_number" class="form-label">รหัสใบสั่งขาย (SO Number)</label>
-            <input type="text" name="so_number" id="so_number" class="form-control" 
-                value="<?php echo $new_so_number; ?>" readonly>
-            <input type="hidden" name="so_id" value="<?php echo $new_so_id; ?>">
+            <label for="create_by" class="form-label">ผู้ทำรายการ</label>
+            <input type="text" name="created_by" id="created_by" class="form-control" 
+                value="<?php echo $created_by; ?>" readonly>
         </div>
 
 
-        <!-- วันที่ SO -->
-        <div class="mb-3">
-            <label for="so_date" class="form-label">วันที่</label>
-            <input type="date" name="so_date" id="so_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+        <div class="row">
+            <!-- รหัสรายการ GI -->
+            <div class="mb-3 col-md-5">
+                <label for="gi_number" class="form-label">เลขที่ใบเบิกสินค้าออก (GI Number)</label>
+                <input type="text" name="gi_number" id="gi_number" class="form-control" 
+                    value="<?php echo $new_gi_number; ?>" readonly>
+                <input type="hidden" name="gi_id" value="<?php echo $new_gi_id; ?>">
+            </div>
+
+            <!-- วันที่ GI -->
+            <div class="mb-3 col-md-5">
+                <label for="gi_date" class="form-label">วันที่ใบเบิกสินค้าออก</label>
+                <input type="date" name="gi_date" id="gi_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+            </div>
         </div>
+
+        <div class="row">
+            <!-- เลขที่ใบ SO อ้างอิง -->
+            <div class="mb-3 col-md-5">
+                <label for="ref_so_number" class="form-label">เลขที่ใบ SO อ้างอิง</label>
+                <input type="text" name="ref_so_number" id="ref_so_number" class="form-control" placeholder ="เลขที่ใบ SO/ใบสั่งขาย">
+            </div>
+    
+            <!-- วันที่ใบ SO อ้างอิง -->
+            <div class="mb-3 col-md-5" >
+                <label for="ref_so_date" class="form-label">วันที่ใบ SO อ้างอิง</label>
+                <input type="date" name="ref_so_date" id="ref_so_date" class="form-control">
+            </div>
+         </div>
 
         <!-- ตารางรายการสินค้า -->
         <div class="mb-3">
             <label class="form-label">รายการสินค้า</label>
-            <table class="table table-bordered table-striped" id="so_items_table">
+            <table class="table table-bordered table-striped" id="gi_items_table">
                 <thead>
                     <tr>
                         <th>รหัสสินค้า</th>
                         <th>ชื่อสินค้า</th>
                         <th>จำนวน</th>
-                        <th>ราคาต่อหน่วย</th>
                         <th>หน่วยนับ</th>
                         <th>ลบ</th>
                     </tr>
@@ -126,7 +150,6 @@
                         </td>
                         <td><input type="text" name="so_name[]" class="form-control" required readonly></td>
                         <td><input type="number" name="so_qty[]" class="form-control" min="1" required></td>
-                        <td><input type="number" name="so_unit_price[]" class="form-control" min="0" step="0.01" required></td>
                         <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
                         <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                     </tr>
