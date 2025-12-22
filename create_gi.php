@@ -2,7 +2,7 @@
     include('server.php');
 
     $created_by = 'admin'; // ชั่วคราว
-    
+
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25
     $month = date('m'); // เช่น 10
@@ -86,7 +86,7 @@
         <!-- Section: Create GI -->
         <h5 class="mb-3 fw-bold">ทำรายการเบิกสินค้าออก (Goods_Issue)</h5>
 
-        <form action="save_so.php" method="POST">
+        <form action="save_gi.php" method="POST">
 
         <!-- ผู้ทำรายการ -->
         <div class="mb-3">
@@ -148,8 +148,8 @@
                                 <input type="hidden" name="product_id[]" class="product-id">
                             </div>
                         </td>
-                        <td><input type="text" name="so_name[]" class="form-control" required readonly></td>
-                        <td><input type="number" name="so_qty[]" class="form-control" min="1" required></td>
+                        <td><input type="text" name="gi_name[]" class="form-control" required readonly></td>
+                        <td><input type="number" name="gi_qty[]" class="form-control" min="1" required></td>
                         <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
                         <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                     </tr>
@@ -167,7 +167,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function(){
     const addBtn = document.getElementById('add_item_btn');
-    const tableBody = document.querySelector('#so_items_table tbody');
+    const tableBody = document.querySelector('#gi_items_table tbody');
 
     addBtn.addEventListener('click', function(){
         const firstRow = tableBody.querySelector('tr');
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     tableBody.addEventListener('change', function(e){
         if(e.target.tagName === 'SELECT'){
-            const unitInput = e.target.closest('tr').querySelector('input[name="so_unit[]"]');
+            const unitInput = e.target.closest('tr').querySelector('input[name="gi_unit[]"]');
             unitInput.value = e.target.selectedOptions[0].dataset.unit || '';
         }
     });
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function(){
             parent.find(".unit-field").val(unit);
 
             // ✅ หา input ชื่อสินค้าในแถวเดียวกัน แล้วใส่ชื่อ
-            parent.closest('tr').find('input[name="so_name[]"]').val(product_name);
+            parent.closest('tr').find('input[name="gi_name[]"]').val(product_name);
             parent.closest('tr').find('input[name="unit[]"]').val(unit);
 
             $(this).parent().hide(); // ซ่อนผลลัพธ์
@@ -254,41 +254,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     </script>
 
-    <!-- jQuery สำหรับ search ลูกค้า -->
-    <script>
-    $(document).ready(function(){
-        // Autocomplete ลูกค้า
-        $(document).on("keyup", ".customer-search", function(){
-            let query = $(this).val();
-            let inputField = $(this);
-            let resultBox = $(this).siblings(".customer-list");
 
-            if(query.length >= 2){
-                $.ajax({
-                    url: "search_customer.php",
-                    method: "POST",
-                    data: {query: query},
-                    success: function(data){
-                        resultBox.html(data);
-                        resultBox.show();
-                    }
-                });
-            } else{
-                resultBox.hide();
-            }
-        });
-
-        $(document).on("click", ".customer-item", function(){
-            let customer_id = $(this).data("id");
-            let customer_name = $(this).data("name");
-
-            let parent = $(this).closest(".customer-list").parent();
-            parent.find(".customer-search").val(customer_name);
-            parent.find(".customer-id").val(customer_id);
-
-            $(this).parent().hide();
-        });
-    });
-</script>
 </body>
 </html>

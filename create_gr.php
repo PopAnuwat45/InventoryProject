@@ -2,6 +2,7 @@
 include('server.php');
 
     $created_by = 'admin'; // ชั่วคราว
+    $approved_by = 'admin'; // ชั่วคราว
 
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25

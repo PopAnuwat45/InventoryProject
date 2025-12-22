@@ -4,14 +4,15 @@ include 'server.php'; // เชื่อมต่อฐานข้อมูล
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // ดึงค่าจากฟอร์ม
-    $so_id = $_POST['so_id'];
-    $so_number = $_POST['so_number'];
-    $so_date = $_POST['so_date'];
-    $customer_id = $_POST['customer_id'];
+    $gi_id = $_POST['gi_id'];
+    $gi_number = $_POST['gi_number'];
+    $gi_date = $_POST['gi_date'];
+    
+    $ref_so_number = $_POST['ref_so_number'];
+    $ref_so_date = $_POST['ref_so_date'];
 
     $product_ids = $_POST['product_id'];       // array
-    $so_qtys = $_POST['so_qty'];               // array
-    $so_unit_prices = $_POST['so_unit_price']; // array
+    $gi_qtys = $_POST['gi_qty'];               // array
 
     $created_by = 'admin'; // ชั่วคราว
 

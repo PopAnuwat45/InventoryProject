@@ -141,7 +141,7 @@ if (isset($_POST['search_product'])) {
             while ($row = $result_movement->fetch_assoc()) {
 
                 // ✅ เลือกเลขใบตามประเภท IN/OUT
-                $ref_number = ($row['movement_type'] === 'IN') ? $row['po_number'] : $row['so_number'];
+                $ref_number = ($row['movement_type'] === 'IN') ? $row['gr_number'] : $row['gi_number'];
                 if (empty($ref_number)) $ref_number = '-';
 
                 // ✅ แยกคอลัมน์รับเข้า / จ่ายออก
