@@ -116,13 +116,13 @@
             <!-- เลขที่ใบ SO อ้างอิง -->
             <div class="mb-3 col-md-5">
                 <label for="ref_so_number" class="form-label">เลขที่ใบ SO อ้างอิง</label>
-                <input type="text" name="ref_so_number" id="ref_so_number" class="form-control" placeholder ="เลขที่ใบ SO/ใบสั่งขาย">
+                <input type="text" name="ref_so_number" id="ref_so_number" class="form-control" placeholder ="เลขที่ใบ SO/ใบสั่งขาย" required>
             </div>
     
             <!-- วันที่ใบ SO อ้างอิง -->
             <div class="mb-3 col-md-5" >
                 <label for="ref_so_date" class="form-label">วันที่ใบ SO อ้างอิง</label>
-                <input type="date" name="ref_so_date" id="ref_so_date" class="form-control">
+                <input type="date" name="ref_so_date" id="ref_so_date" class="form-control" required>
             </div>
          </div>
 
