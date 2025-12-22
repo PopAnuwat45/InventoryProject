@@ -144,20 +144,30 @@ if (isset($_POST['search_product'])) {
                 $ref_number = ($row['movement_type'] === 'IN') ? $row['gr_number'] : $row['gi_number'];
                 if (empty($ref_number)) $ref_number = '-';
 
+                
+
                 // ✅ แยกคอลัมน์รับเข้า / จ่ายออก
                 $qty_in  = ($row['movement_type'] === 'IN')  ? $row['movement_qty'] : '';
                 $qty_out = ($row['movement_type'] === 'OUT') ? $row['movement_qty'] : '';
 
-                // ✅ ถ้าเป็น OUT ให้ใส่เครื่องหมายลบหน้า qty
-                $qty_display = ($row['movement_type'] === 'OUT') ? '-' . $row['movement_qty'] : $row['movement_qty'];
+                // แสดงผล qty พร้อม + / -
+                if ($row['movement_type'] === 'IN') {
+                    $qty_display = '+' . $row['movement_qty'];
+                } elseif ($row['movement_type'] === 'OUT') {
+                    $qty_display = '-' . $row['movement_qty'];
+                } else {
+                    $qty_display = $row['movement_qty'];
+                }
+
+                
 
                 echo "<tr>
                         <td>{$row['movement_date']}</td>
                         <td>{$row['movement_type']}</td>
                         <td>{$row['ref_type']}</td>
                         <td>{$ref_number}</td>
-                        <td class='text-success'>{$qty_in}</td>
-                        <td class='text-danger'>{$qty_out}</td>
+                        <td class='text-success'>" . (($row['movement_type'] === 'IN') ? $qty_display : '') . "</td>
+                         <td class='text-danger'>" . (($row['movement_type'] === 'OUT') ? $qty_display : '') . "</td>
                         <td>{$row['created_by']}</td>
                       </tr>";
             }

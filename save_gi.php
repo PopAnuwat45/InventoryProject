@@ -16,37 +16,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $created_by = 'admin'; // ชั่วคราว
 
-    // ===== Insert ข้อมูลลง sale_order =====
-    $sql_so = "INSERT INTO sale_order (so_id, so_number, so_date, customer_id, created_by) 
-               VALUES (?, ?, ?, ?, ?)";
-    $stmt_so = $conn->prepare($sql_so);
-    $stmt_so->bind_param("issis", $so_id, $so_number, $so_date, $customer_id, $created_by);
+    // ===== Insert ข้อมูลลง goods_issue =====
+    $sql_gi = "INSERT INTO goods_issue (gi_id, gi_number, gi_date, ref_so_number, ref_so_date, created_by) 
+               VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt_gi = $conn->prepare($sql_gi);
+    $stmt_gi->bind_param("isssss", $gi_id, $gi_number, $gi_date, $ref_so_number, $ref_so_date, $created_by);
 
-    if ($stmt_so->execute()) {
+    if ($stmt_gi->execute()) {
 
         // ===== Insert รายการสินค้า =====
-        $sql_item = "INSERT INTO sale_order_item (so_item_id, so_id, product_id, so_qty, so_unit_price) 
-                     VALUES (?, ?, ?, ?, ?)";
+        $sql_item = "INSERT INTO goods_issue_item (gi_item_id, gi_id, product_id, gi_qty) 
+                     VALUES (?, ?, ?, ?)";
         $stmt_item = $conn->prepare($sql_item);
 
         // ===== Insert Stock Movement =====
         $sql_movement = "INSERT INTO stock_movement 
             (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-            VALUES (?, ?, NOW(), 'OUT', 'SO', ?, ?, ?)";
+            VALUES (?, ?, NOW(), 'OUT', 'GI', ?, ?, ?)";
         $stmt_movement = $conn->prepare($sql_movement);
 
         for ($i = 0; $i < count($product_ids); $i++) {
             $product_id = $product_ids[$i];
-            $qty = $so_qtys[$i];
-            $unit_price = $so_unit_prices[$i];
+            $qty = $gi_qtys[$i];
 
-            // ===== สร้าง so_item_id =====
-            $result_last_item = $conn->query("SELECT MAX(so_item_id) AS last_id FROM sale_order_item");
+            // ===== สร้าง gi_item_id =====
+            $result_last_item = $conn->query("SELECT MAX(gi_item_id) AS last_id FROM goods_issue_item");
             $row_last_item = $result_last_item->fetch_assoc();
-            $so_item_id = $row_last_item['last_id'] ? $row_last_item['last_id'] + 1 : 1;
+            $gi_item_id = $row_last_item['last_id'] ? $row_last_item['last_id'] + 1 : 1;
 
-            // Insert sale_order_item
-            $stmt_item->bind_param("iiiid", $so_item_id, $so_id, $product_id, $qty, $unit_price);
+            // Insert goods_issue_item
+            $stmt_item->bind_param("iiii", $gi_item_id, $gi_id, $product_id, $qty);
             $stmt_item->execute();
 
             // ===== สร้าง movement_id =====
@@ -55,16 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $movement_id = $row_last_move['last_id'] ? $row_last_move['last_id'] + 1 : 1;
 
             // Insert Stock Movement
-            $stmt_movement->bind_param("iiiis", $movement_id, $product_id, $so_id, $qty, $created_by);
+            $stmt_movement->bind_param("iiiis", $movement_id, $product_id, $gi_id, $qty, $created_by);
             $stmt_movement->execute();
         }
 
         $stmt_item->close();
         $stmt_movement->close();
 
-        echo "<script>alert('เปิดใบสั่งขายเรียบร้อยแล้วและบันทึกการเบิกสินค้าออกคลัง'); window.location='create_so.php';</script>";
+        echo "<script>alert('เปิดใบสั่งขายเรียบร้อยแล้วและบันทึกการเบิกสินค้าออกคลัง'); window.location='create_gi.php';</script>";
     } else {
-        echo "<script>alert('เกิดข้อผิดพลาด ทำรายการไม่สำเร็จ'); window.location='create_so.php';</script>" . $stmt_so->error;
+        echo "<script>alert('เกิดข้อผิดพลาด ทำรายการไม่สำเร็จ'); window.location='create_gi.php';</script>" . $stmt_so->error;
     }
 
     $stmt_so->close();
