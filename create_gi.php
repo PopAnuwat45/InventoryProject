@@ -25,8 +25,8 @@
 
     // วนลูปตรวจสอบไม่ให้เลขซ้ำ
     do {
-        $new_so_number = "SO" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
-        $sql_check = "SELECT COUNT(*) AS cnt FROM sale_order WHERE so_number = '$new_so_number'";
+        $new_gi_number = "GI" . $year . $month . "-" . str_pad($next_number, 4, "0", STR_PAD_LEFT);
+        $sql_check = "SELECT COUNT(*) AS cnt FROM goods_issue WHERE gi_number = '$new_gi_number'";
         $result_check = $conn->query($sql_check);
         $row_check = $result_check->fetch_assoc();
         if ($row_check['cnt'] > 0) {
@@ -36,14 +36,14 @@
         }
     } while (true);
 
-    // หา so_id ใหม่ (ไม่ได้ AUTO_INCREMENT)
-    $sql_last_id = "SELECT so_id FROM sale_order ORDER BY so_id DESC LIMIT 1";
+    // หา gi_id ใหม่ (ไม่ได้ AUTO_INCREMENT)
+    $sql_last_id = "SELECT gi_id FROM goods_issue ORDER BY gi_id DESC LIMIT 1";
     $result_last_id = $conn->query($sql_last_id);
     if ($result_last_id && $result_last_id->num_rows > 0) {
         $row_last_id = $result_last_id->fetch_assoc();
-        $new_so_id = $row_last_id['so_id'] + 1;
+        $new_gi_id = $row_last_id['gi_id'] + 1;
     } else {
-        $new_so_id = 1;
+        $new_gi_id = 1;
     }
 ?>
 
