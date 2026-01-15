@@ -31,5 +31,9 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">📜 สถานะคำขออนุมัติ</a>
+                    <a href ="#" class="btn btn-outline-primary w-100">⌛ สถานะรายการขออนุมัติ</a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a href ="#" class="btn btn-outline-primary w-100">❌ รายการที่ไม่ได้รับการอนุมัติ</a>
                 </div>
