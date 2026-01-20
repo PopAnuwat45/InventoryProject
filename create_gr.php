@@ -92,15 +92,17 @@ include('server.php');
     <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
 
     <form action="save_gr.php" method="POST">
-
-    <!-- ผู้ทำรายการ -->
-    <div class="mb-3">
-        <label for="create_by" class="form-label">ผู้ทำรายการ</label>
-        <input type="text" name="created_by" id="created_by" class="form-control" 
-            value="<?php echo $created_by; ?>" readonly>
-    </div>
     
-    <div class ="row">
+        <input type="hidden" name="action" value="save">
+
+        <!-- ผู้ทำรายการ -->
+        <div class="mb-3">
+            <label for="create_by" class="form-label">ผู้ทำรายการ</label>
+            <input type="text" name="created_by" id="created_by" class="form-control" 
+                value="<?php echo $created_by; ?>" readonly>
+        </div>
+    
+        <div class ="row">
         <!-- เลขที่ใบรับสินค้า -->
         <div class="mb-3 col-md-5">
             <label for="gr_number" class="form-label">เลขที่ใบรับสินค้า (GR Number)</label>
@@ -167,7 +169,7 @@ include('server.php');
     </div>
 
     <div class="mb-3 text-end">
-        <button type="submit" class="btn btn-primary">บันทึกใบสั่งซื้อ</button>
+        <button type="submit" class="btn btn-primary">บันทึกใบรับสินค้า</button>
     </div>
 
 </form>

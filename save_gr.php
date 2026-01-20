@@ -1,73 +1,122 @@
 <?php
-include 'server.php'; // เชื่อมต่อฐานข้อมูล
+include 'server.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // ดึงค่าจากฟอร์ม
-    $gr_id = $_POST['gr_id'];
-    $gr_number = $_POST['gr_number'];
-    $gr_date = $_POST['gr_date'];
+    $action = $_POST['action'];
 
-    $ref_doc_number = $_POST['ref_doc_number'];
-    $ref_doc_date = $_POST['ref_doc_date'];
+    /* =====================================================
+       ACTION : SAVE (สร้าง GR / Pending)
+    ===================================================== */
+    if ($action === 'save') {
 
-    $product_ids = $_POST['product_id'];       // array
-    $gr_qtys = $_POST['gr_qty'];               // array
+        $gr_id = $_POST['gr_id'];
+        $gr_number = $_POST['gr_number'];
+        $gr_date = $_POST['gr_date'];
 
-    $created_by = $_POST['created_by'];
+        $ref_doc_number = $_POST['ref_doc_number'];
+        $ref_doc_date = $_POST['ref_doc_date'];
 
-    // ===== Insert ข้อมูลลง goods_receipt =====
-    $sql_gr = "INSERT INTO goods_receipt (gr_id, gr_number, gr_date, ref_doc_number, ref_doc_date, created_by) 
-            VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt_gr = $conn->prepare($sql_gr);
-    $stmt_gr->bind_param("isssss", $gr_id, $gr_number, $gr_date, $ref_doc_number, $ref_doc_date, $created_by);
+        $product_ids = $_POST['product_id'];
+        $gr_qtys = $_POST['gr_qty'];
 
-    if ($stmt_gr->execute()) {
+        $created_by = $_POST['created_by'];
 
-        // ===== Insert รายการสินค้า =====
-        $sql_item = "INSERT INTO goods_receipt_item (gr_item_id, gr_id, product_id, gr_qty) 
-                    VALUES (?, ?, ?, ?)";
-        $stmt_item = $conn->prepare($sql_item);
+        // ===== Insert goods_receipt (Pending) =====
+        $sql_gr = "INSERT INTO goods_receipt
+            (gr_id, gr_number, gr_date, ref_doc_number, ref_doc_date, created_by, gr_status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
+        $stmt_gr = $conn->prepare($sql_gr);
+        $stmt_gr->bind_param(
+            "isssss",
+            $gr_id,
+            $gr_number,
+            $gr_date,
+            $ref_doc_number,
+            $ref_doc_date,
+            $created_by
+        );
 
-        // ===== Insert Stock Movement =====
-        $sql_movement = "INSERT INTO stock_movement 
-            (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-            VALUES (?, ?, NOW(), 'IN', 'GR', ?, ?, ?)";
-        $stmt_movement = $conn->prepare($sql_movement);
+        if ($stmt_gr->execute()) {
 
-        for ($i = 0; $i < count($product_ids); $i++) {
-            $product_id = $product_ids[$i];
-            $qty = $gr_qtys[$i];
+            // ===== Insert goods_receipt_item =====
+            $sql_item = "INSERT INTO goods_receipt_item
+                (gr_item_id, gr_id, product_id, gr_qty)
+                VALUES (?, ?, ?, ?)";
+            $stmt_item = $conn->prepare($sql_item);
 
-            // ===== สร้าง gr_item_id =====
-            $result_last_item = $conn->query("SELECT MAX(gr_item_id) AS last_id FROM goods_receipt_item");
-            $row_last_item = $result_last_item->fetch_assoc();
-            $gr_item_id = $row_last_item['last_id'] ? $row_last_item['last_id'] + 1 : 1;
+            for ($i = 0; $i < count($product_ids); $i++) {
 
-            // Insert รายการสินค้า
-            $stmt_item->bind_param("iiii", $gr_item_id, $gr_id, $product_id, $qty);
-            $stmt_item->execute();
+                $product_id = $product_ids[$i];
+                $qty = $gr_qtys[$i];
 
-            // ===== สร้าง movement_id =====
-            $result_last_move = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
-            $row_last_move = $result_last_move->fetch_assoc();
-            $movement_id = $row_last_move['last_id'] ? $row_last_move['last_id'] + 1 : 1;
+                $result = $conn->query("SELECT MAX(gr_item_id) AS last_id FROM goods_receipt_item");
+                $row = $result->fetch_assoc();
+                $gr_item_id = $row['last_id'] ? $row['last_id'] + 1 : 1;
 
-            // Insert Stock Movement
-            $stmt_movement->bind_param("iiiis", $movement_id, $product_id, $gr_id, $qty, $created_by);
-            $stmt_movement->execute();
+                $stmt_item->bind_param(
+                    "iiii",
+                    $gr_item_id,
+                    $gr_id,
+                    $product_id,
+                    $qty
+                );
+                $stmt_item->execute();
+            }
+
+            $stmt_item->close();
+
+            echo "<script>alert('บันทึกใบรับสินค้า (Pending) เรียบร้อยแล้ว'); window.location='create_gr.php';</script>";
         }
 
-        $stmt_item->close();
-        $stmt_movement->close();
-
-        echo "<script>alert('ทำรายการรับสินค้าเรียบร้อยแล้ว'); window.location='create_gr.php';</script>";
-
-    } else {
-        echo "<script>alert('เกิดข้อผิดพลาด ทำรายการไม่สำเร็จ'); window.location='create_gr.php';</script>" . $stmt_gr->error;
+        $stmt_gr->close();
     }
 
-    $stmt_gr->close();
+    /* =====================================================
+       ACTION : APPROVE (อนุมัติ + กระทบสต๊อก)
+    ===================================================== */
+    if ($action === 'approve') {
+
+        $gr_id = $_POST['gr_id'];
+        $approve_by = $_POST['approve_by'];
+
+        // ===== Update Status =====
+        $sql_update = "UPDATE goods_receipt
+            SET gr_status = 'Approved', approve_by = ?
+            WHERE gr_id = ? AND gr_status = 'Pending'";
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bind_param("si", $approve_by, $gr_id);
+        $stmt_update->execute();
+
+        if ($stmt_update->affected_rows > 0) {
+
+            // ===== ดึงรายการสินค้า =====
+            $items = $conn->query("
+                SELECT product_id, gr_qty
+                FROM goods_receipt_item
+                WHERE gr_id = $gr_id
+            ");
+
+            while ($row = $items->fetch_assoc()) {
+
+                $result = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
+                $last = $result->fetch_assoc();
+                $movement_id = $last['last_id'] ? $last['last_id'] + 1 : 1;
+
+                $conn->query("
+                    INSERT INTO stock_movement
+                    (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
+                    VALUES
+                    ($movement_id, {$row['product_id']}, NOW(), 'IN', 'GR', $gr_id, {$row['gr_qty']}, '$approve_by')
+                ");
+            }
+
+            echo "<script>alert('อนุมัติใบรับสินค้าเรียบร้อยแล้ว'); window.location='approve_gr.php';</script>";
+        }
+
+        $stmt_update->close();
+    }
+
     $conn->close();
 }
 ?>
