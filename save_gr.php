@@ -72,51 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_gr->close();
     }
 
-    /* =====================================================
-       ACTION : APPROVE (อนุมัติ + กระทบสต๊อก)
-    ===================================================== */
-    if ($action === 'approve') {
-
-        $gr_id = $_POST['gr_id'];
-        $approve_by = $_POST['approve_by'];
-
-        // ===== Update Status =====
-        $sql_update = "UPDATE goods_receipt
-            SET gr_status = 'Approved', approve_by = ?
-            WHERE gr_id = ? AND gr_status = 'Pending'";
-        $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("si", $approve_by, $gr_id);
-        $stmt_update->execute();
-
-        if ($stmt_update->affected_rows > 0) {
-
-            // ===== ดึงรายการสินค้า =====
-            $items = $conn->query("
-                SELECT product_id, gr_qty
-                FROM goods_receipt_item
-                WHERE gr_id = $gr_id
-            ");
-
-            while ($row = $items->fetch_assoc()) {
-
-                $result = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
-                $last = $result->fetch_assoc();
-                $movement_id = $last['last_id'] ? $last['last_id'] + 1 : 1;
-
-                $conn->query("
-                    INSERT INTO stock_movement
-                    (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-                    VALUES
-                    ($movement_id, {$row['product_id']}, NOW(), 'IN', 'GR', $gr_id, {$row['gr_qty']}, '$approve_by')
-                ");
-            }
-
-            echo "<script>alert('อนุมัติใบรับสินค้าเรียบร้อยแล้ว'); window.location='approve_gr.php';</script>";
-        }
-
-        $stmt_update->close();
-    }
-
     $conn->close();
 }
 ?>

@@ -3,7 +3,7 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">✅ รายการคำขออนุมัติ</a>
+                    <a href ="approval_requests.php" class="btn btn-outline-primary w-100">✅ รายการคำขออนุมัติ</a>
                 </div>
 
                 <div class="col-6 col-md-3">
