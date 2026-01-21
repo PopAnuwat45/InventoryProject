@@ -1,6 +1,8 @@
 <?php
 include('server.php');
 
+$activeTab = $_GET['tab'] ?? 'gr';
+
 /* ===============================
    ดึงข้อมูล GR Pending
 ================================ */
@@ -30,7 +32,10 @@ $sql_gi = "SELECT
         ORDER BY gi_date DESC";
 $result_gi = $conn->query($sql_gi);
 $gi_count = $result_gi->num_rows;
+
+$total_approval_count = $gr_count + $gi_count;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="th">
@@ -72,7 +77,8 @@ $gi_count = $result_gi->num_rows;
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-3 fw-bold">
         <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-gr">
+            <button class="nav-link <?= $activeTab === 'gr' ? 'active' : '' ?>"
+             data-bs-toggle="tab" data-bs-target="#tab-gr">
                 การรับสินค้า
                 <?php if ($gr_count > 0): ?>
                     <span class="badge bg-danger ms-1"><?php echo $gr_count; ?></span>
@@ -80,7 +86,8 @@ $gi_count = $result_gi->num_rows;
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-gi">
+            <button class="nav-link <?= $activeTab === 'gi' ? 'active' : '' ?>" 
+            data-bs-toggle="tab" data-bs-target="#tab-gi">
                 การเบิกสินค้า
                 <?php if ($gi_count > 0): ?>
                     <span class="badge bg-danger ms-1"><?php echo $gi_count; ?></span>
@@ -94,7 +101,7 @@ $gi_count = $result_gi->num_rows;
         <!-- ===============================
              TAB: การรับสินค้า (GR)
         ================================ -->
-        <div class="tab-pane fade show active" id="tab-gr">
+        <div class="tab-pane fade <?= $activeTab === 'gr' ? 'show active' : '' ?>" id="tab-gr">
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-primary">
@@ -137,7 +144,7 @@ $gi_count = $result_gi->num_rows;
         <!-- ===============================
              TAB: การเบิกสินค้า (GI)
         ================================ -->
-        <div class="tab-pane fade" id="tab-gi">
+        <div class="tab-pane fade <?= $activeTab === 'gi' ? 'show active' : '' ?>" id="tab-gi">
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-primary">
@@ -158,7 +165,7 @@ $gi_count = $result_gi->num_rows;
                                     <td><?php echo htmlspecialchars($gi['ref_so_number']); ?></td>
                                     <td><?php echo htmlspecialchars($gi['created_by']); ?></td>
                                     <td class="text-center">
-                                        <a href="approve_gi.php?gi_id=<?php echo $gi['gi_id']; ?>"
+                                        <a href="approve_gi.php?gi_id=<?php echo $gi['gi_id']; ?>&from=gi"
                                            class="btn btn-sm btn-primary">
                                             ดูรายละเอียด
                                         </a>

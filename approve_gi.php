@@ -155,7 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
 <div class="container my-4">
 
     <h5 class="fw-bold mb-2">รายละเอียดใบเบิกสินค้า</h5>
-    <a href="approval_requests.php" class="btn btn-outline-danger btn-sm mb-3">
+
+    <a href="approval_requests.php?tab=gi" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
 
@@ -190,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
     <!-- ตารางสินค้า -->
     <div class="table-responsive mb-3">
         <table class="table table-striped align-middle">
-            <thead class="table-danger">
+            <thead class="table-primary">
                 <tr>
                     <th>รหัสสินค้า</th>
                     <th>ชื่อสินค้า</th>
@@ -215,8 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
     <?php if ($gi['gi_status'] === 'Pending'): ?>
     <form method="POST" class="text-end">
         <button type="submit" name="approve"
-                class="btn btn-success"
-                onclick="this.disabled=true; this.form.submit();">
+                class="btn btn-success">
             อนุมัติรายการ
         </button>
         <button type="submit" name="reject"

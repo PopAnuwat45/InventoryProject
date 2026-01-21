@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
                 <tr>
                     <td><?= $item['product_id_full']; ?></td>
                     <td><?= $item['product_name']; ?></td>
-                    <td><?= $item['gr_qty']; ?></td>
+                    <td class="text-success">+<?= $item['gr_qty']; ?></td>
                     <td><?= $item['unit']; ?></td>
                 </tr>
                 <?php endforeach; ?>
@@ -226,12 +226,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
 
         <button type="submit"
                 name="approve"
-                class="btn btn-success"
-                onclick="this.disabled=true; this.form.submit();">
+                class="btn btn-success">
             อนุมัติรายการ
         </button>    
 
-        <button   button type="submit"
+        <button type="submit"
                 name="reject"
                 class="btn btn-danger me-2"
                 onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
