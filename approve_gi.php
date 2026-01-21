@@ -7,41 +7,41 @@ include('server.php');
 $approved_by = 'admin';
 
 /* ===============================
-   รับค่า gr_id
+   รับค่า gi_id
 ================================ */
-if (!isset($_GET['gr_id'])) {
-    die('ไม่พบข้อมูลใบรับสินค้า');
+if (!isset($_GET['gi_id'])) {
+    die('ไม่พบข้อมูลใบเบิกสินค้า');
 }
-$gr_id = intval($_GET['gr_id']);
+$gi_id = intval($_GET['gi_id']);
 
 /* ===============================
-   ดึงข้อมูลหัว GR
+   ดึงข้อมูลหัว GI
 ================================ */
-$sql_gr = "SELECT * FROM goods_receipt WHERE gr_id = ?";
-$stmt_gr = $conn->prepare($sql_gr);
-$stmt_gr->bind_param("i", $gr_id);
-$stmt_gr->execute();
-$result_gr = $stmt_gr->get_result();
+$sql_gi = "SELECT * FROM goods_issue WHERE gi_id = ?";
+$stmt_gi = $conn->prepare($sql_gi);
+$stmt_gi->bind_param("i", $gi_id);
+$stmt_gi->execute();
+$result_gi = $stmt_gi->get_result();
 
-if ($result_gr->num_rows === 0) {
-    die('ไม่พบข้อมูลใบรับสินค้า');
+if ($result_gi->num_rows === 0) {
+    die('ไม่พบข้อมูลใบเบิกสินค้า');
 }
-$gr = $result_gr->fetch_assoc();
+$gi = $result_gi->fetch_assoc();
 
 /* ===============================
    ดึงรายการสินค้า
 ================================ */
 $sql_items = "SELECT 
-                gri.product_id,
-                gri.gr_qty,
+                gii.product_id,
+                gii.gi_qty,
                 p.product_id_full,
                 p.product_name,
                 p.unit
-            FROM goods_receipt_item gri
-            JOIN product p ON gri.product_id = p.product_id
-            WHERE gri.gr_id = ?";
+            FROM goods_issue_item gii
+            JOIN product p ON gii.product_id = p.product_id
+            WHERE gii.gi_id = ?";
 $stmt_items = $conn->prepare($sql_items);
-$stmt_items->bind_param("i", $gr_id);
+$stmt_items->bind_param("i", $gi_id);
 $stmt_items->execute();
 $result_items = $stmt_items->get_result();
 
@@ -50,22 +50,23 @@ while ($row = $result_items->fetch_assoc()) {
     $items[] = $row;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
+/* ===============================
+   POST : Approve / Reject
+================================ */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
 
     $conn->begin_transaction();
 
     try {
 
-        /* ===============================
-           กรณีกด "ไม่อนุมัติ"
-        ================================ */
+        /* ---------- Reject ---------- */
         if (isset($_POST['reject'])) {
 
-            $sql_reject = "UPDATE goods_receipt
-                           SET gr_status = 'Reject'
-                           WHERE gr_id = ? AND gr_status = 'Pending'";
+            $sql_reject = "UPDATE goods_issue
+                           SET gi_status = 'Reject'
+                           WHERE gi_id = ? AND gi_status = 'Pending'";
             $stmt_reject = $conn->prepare($sql_reject);
-            $stmt_reject->bind_param("i", $gr_id);
+            $stmt_reject->bind_param("i", $gi_id);
             $stmt_reject->execute();
 
             if ($stmt_reject->affected_rows === 0) {
@@ -75,38 +76,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
             $conn->commit();
 
             echo "<script>
-                    alert('ไม่อนุมัติใบรับสินค้าเรียบร้อยแล้ว');
+                    alert('ไม่อนุมัติใบเบิกสินค้าเรียบร้อยแล้ว');
                     window.location='approval_requests.php';
                   </script>";
             exit;
         }
 
-        /* ===============================
-           กรณีกด "อนุมัติ"
-        ================================ */
+        /* ---------- Approve ---------- */
         if (isset($_POST['approve'])) {
 
-            // Update สถานะ GR
-            $sql_update = "UPDATE goods_receipt
-                           SET gr_status = 'Approve', approved_by = ?
-                           WHERE gr_id = ? AND gr_status = 'Pending'";
+            $sql_update = "UPDATE goods_issue
+                           SET gi_status = 'Approve', approved_by = ?
+                           WHERE gi_id = ? AND gi_status = 'Pending'";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("si", $approved_by, $gr_id);
+            $stmt_update->bind_param("si", $approved_by, $gi_id);
             $stmt_update->execute();
 
             if ($stmt_update->affected_rows === 0) {
                 throw new Exception('รายการนี้ถูกอนุมัติไปแล้ว');
             }
 
-            // ดึง movement_id ล่าสุด
+            // movement_id ล่าสุด
             $result = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
             $row = $result->fetch_assoc();
             $movement_id = $row['last_id'] ?? 0;
 
-            // Insert stock movement
             $sql_move = "INSERT INTO stock_movement
                 (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-                VALUES (?, ?, NOW(), 'IN', 'GR', ?, ?, ?)";
+                VALUES (?, ?, NOW(), 'OUT', 'GI', ?, ?, ?)";
             $stmt_move = $conn->prepare($sql_move);
 
             foreach ($items as $item) {
@@ -115,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
                     "iiiis",
                     $movement_id,
                     $item['product_id'],
-                    $gr_id,
-                    $item['gr_qty'],
+                    $gi_id,
+                    $item['gi_qty'],
                     $approved_by
                 );
                 $stmt_move->execute();
@@ -125,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
             $conn->commit();
 
             echo "<script>
-                    alert('อนุมัติใบรับสินค้าเรียบร้อยแล้ว');
+                    alert('อนุมัติใบเบิกสินค้าเรียบร้อยแล้ว');
                     window.location='approval_requests.php';
                   </script>";
             exit;
@@ -136,16 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
         die('เกิดข้อผิดพลาด: ' . $e->getMessage());
     }
 }
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบคลังสินค้า (Inventory System)</title>
+    <title>อนุมัติใบเบิกสินค้า</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -154,16 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
 
 <nav class="navbar navbar-expand-lg navbar-dark main-nav">
     <div class="container">
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-            <img src="img/logo.jpg" alt="" width="100" height="30" class="me-2">
-            ระบบคลังสินค้า
-        </a>
+        <a class="navbar-brand fw-bold" href="index.php">ระบบคลังสินค้า</a>
     </div>
 </nav>
 
 <div class="container my-4">
 
-    <h5 class="fw-bold mb-2">รายละเอียดใบรับสินค้า</h5>
+    <h5 class="fw-bold mb-2">รายละเอียดใบเบิกสินค้า</h5>
     <a href="approval_requests.php" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
@@ -172,12 +163,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
     <div class="card mb-3">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4"><strong>เลขที่ GR:</strong> <?= $gr['gr_number']; ?></div>
-                <div class="col-md-4"><strong>วันที่:</strong> <?= $gr['gr_date']; ?></div>
+                <div class="col-md-4"><strong>เลขที่ GI:</strong> <?= $gi['gi_number']; ?></div>
+                <div class="col-md-4"><strong>วันที่:</strong> <?= $gi['gi_date']; ?></div>
                 <div class="col-md-4">
                     <strong>สถานะ:</strong>
                     <?php
-                    $badge = match ($gr['gr_status']) {
+                    $badge = match ($gi['gi_status']) {
                         'Pending' => 'warning',
                         'Approve' => 'success',
                         'Reject'  => 'danger',
@@ -185,13 +176,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
                     };
                     ?>
                     <span class="badge bg-<?= $badge ?>">
-                        <?= $gr['gr_status']; ?>
+                        <?= $gi['gi_status']; ?>
                     </span>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-md-4"><strong>เอกสารอ้างอิง:</strong> <?= $gr['ref_doc_number']; ?></div>
-                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gr['created_by']; ?></div>
+                <div class="col-md-4"><strong>เอกสารอ้างอิง (SO):</strong> <?= $gi['ref_so_number']; ?></div>
+                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gi['created_by']; ?></div>
             </div>
         </div>
     </div>
@@ -199,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
     <!-- ตารางสินค้า -->
     <div class="table-responsive mb-3">
         <table class="table table-striped align-middle">
-            <thead class="table-primary">
+            <thead class="table-danger">
                 <tr>
                     <th>รหัสสินค้า</th>
                     <th>ชื่อสินค้า</th>
@@ -212,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
                 <tr>
                     <td><?= $item['product_id_full']; ?></td>
                     <td><?= $item['product_name']; ?></td>
-                    <td><?= $item['gr_qty']; ?></td>
+                    <td class="text-danger">-<?= $item['gi_qty']; ?></td>
                     <td><?= $item['unit']; ?></td>
                 </tr>
                 <?php endforeach; ?>
@@ -220,31 +211,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
         </table>
     </div>
 
-    <!-- ปุ่มอนุมัติ และ ไม่อนุมัติ-->
-    <?php if ($gr['gr_status'] === 'Pending'): ?>
+    <!-- ปุ่ม -->
+    <?php if ($gi['gi_status'] === 'Pending'): ?>
     <form method="POST" class="text-end">
-
-        <button type="submit"
-                name="approve"
+        <button type="submit" name="approve"
                 class="btn btn-success"
                 onclick="this.disabled=true; this.form.submit();">
             อนุมัติรายการ
-        </button>    
-
-        <button   button type="submit"
-                name="reject"
+        </button>
+        <button type="submit" name="reject"
                 class="btn btn-danger me-2"
                 onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
             ไม่อนุมัติ
         </button>
-
-        
-
-</form>
-<?php endif; ?>
-
-
-
+    </form>
+    <?php endif; ?>
 
 </div>
 

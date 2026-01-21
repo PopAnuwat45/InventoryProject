@@ -88,6 +88,8 @@
 
         <form action="save_gi.php" method="POST">
 
+        <input type="hidden" name="action" value="save">
+
         <!-- ผู้ทำรายการ -->
         <div class="mb-3">
             <label for="create_by" class="form-label">ผู้ทำรายการ</label>

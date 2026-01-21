@@ -1,72 +1,81 @@
 <?php
-include 'server.php'; // เชื่อมต่อฐานข้อมูล
+include 'server.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // ดึงค่าจากฟอร์ม
-    $gi_id = $_POST['gi_id'];
-    $gi_number = $_POST['gi_number'];
-    $gi_date = $_POST['gi_date'];
-    
-    $ref_so_number = $_POST['ref_so_number'];
-    $ref_so_date = $_POST['ref_so_date'];
+    $action = $_POST['action'];
 
-    $product_ids = $_POST['product_id'];       // array
-    $gi_qtys = $_POST['gi_qty'];               // array
+    /* =====================================================
+       ACTION : SAVE (สร้าง GI / Pending)
+    ===================================================== */
+    if ($action === 'save') {
 
-    $created_by = 'admin'; // ชั่วคราว
+        $gi_id = $_POST['gi_id'];
+        $gi_number = $_POST['gi_number'];
+        $gi_date = $_POST['gi_date'];
 
-    // ===== Insert ข้อมูลลง goods_issue =====
-    $sql_gi = "INSERT INTO goods_issue (gi_id, gi_number, gi_date, ref_so_number, ref_so_date, created_by) 
-               VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt_gi = $conn->prepare($sql_gi);
-    $stmt_gi->bind_param("isssss", $gi_id, $gi_number, $gi_date, $ref_so_number, $ref_so_date, $created_by);
+        $ref_so_number = $_POST['ref_so_number'];
+        $ref_so_date = $_POST['ref_so_date'];
 
-    if ($stmt_gi->execute()) {
+        $product_ids = $_POST['product_id'];
+        $gi_qtys = $_POST['gi_qty'];
 
-        // ===== Insert รายการสินค้า =====
-        $sql_item = "INSERT INTO goods_issue_item (gi_item_id, gi_id, product_id, gi_qty) 
-                     VALUES (?, ?, ?, ?)";
-        $stmt_item = $conn->prepare($sql_item);
+        $created_by = $_POST['created_by'];
 
-        // ===== Insert Stock Movement =====
-        $sql_movement = "INSERT INTO stock_movement 
-            (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-            VALUES (?, ?, NOW(), 'OUT', 'GI', ?, ?, ?)";
-        $stmt_movement = $conn->prepare($sql_movement);
+        // ===== Insert goods_issue (Pending) =====
+        $sql_gi = "INSERT INTO goods_issue
+            (gi_id, gi_number, gi_date, ref_so_number, ref_so_date, created_by, gi_status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
+        $stmt_gi = $conn->prepare($sql_gi);
+        $stmt_gi->bind_param(
+            "isssss",
+            $gi_id,
+            $gi_number,
+            $gi_date,
+            $ref_so_number,
+            $ref_so_date,
+            $created_by
+        );
 
-        for ($i = 0; $i < count($product_ids); $i++) {
-            $product_id = $product_ids[$i];
-            $qty = $gi_qtys[$i];
+        if ($stmt_gi->execute()) {
 
-            // ===== สร้าง gi_item_id =====
-            $result_last_item = $conn->query("SELECT MAX(gi_item_id) AS last_id FROM goods_issue_item");
-            $row_last_item = $result_last_item->fetch_assoc();
-            $gi_item_id = $row_last_item['last_id'] ? $row_last_item['last_id'] + 1 : 1;
+            // ===== Insert goods_issue_item =====
+            $sql_item = "INSERT INTO goods_issue_item
+                (gi_item_id, gi_id, product_id, gi_qty)
+                VALUES (?, ?, ?, ?)";
+            $stmt_item = $conn->prepare($sql_item);
 
-            // Insert goods_issue_item
-            $stmt_item->bind_param("iiii", $gi_item_id, $gi_id, $product_id, $qty);
-            $stmt_item->execute();
+            for ($i = 0; $i < count($product_ids); $i++) {
 
-            // ===== สร้าง movement_id =====
-            $result_last_move = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
-            $row_last_move = $result_last_move->fetch_assoc();
-            $movement_id = $row_last_move['last_id'] ? $row_last_move['last_id'] + 1 : 1;
+                $product_id = $product_ids[$i];
+                $qty = $gi_qtys[$i];
 
-            // Insert Stock Movement
-            $stmt_movement->bind_param("iiiis", $movement_id, $product_id, $gi_id, $qty, $created_by);
-            $stmt_movement->execute();
+                // ===== สร้าง gi_item_id =====
+                $result = $conn->query("SELECT MAX(gi_item_id) AS last_id FROM goods_issue_item");
+                $row = $result->fetch_assoc();
+                $gi_item_id = $row['last_id'] ? $row['last_id'] + 1 : 1;
+
+                $stmt_item->bind_param(
+                    "iiii",
+                    $gi_item_id,
+                    $gi_id,
+                    $product_id,
+                    $qty
+                );
+                $stmt_item->execute();
+            }
+
+            $stmt_item->close();
+
+            echo "<script>
+                alert('ขออนุมัติใบเบิกสินค้าเรียบร้อยแล้ว');
+                window.location='create_gi.php';
+            </script>";
         }
 
-        $stmt_item->close();
-        $stmt_movement->close();
-
-        echo "<script>alert('เปิดใบสั่งขายเรียบร้อยแล้วและบันทึกการเบิกสินค้าออกคลัง'); window.location='create_gi.php';</script>";
-    } else {
-        echo "<script>alert('เกิดข้อผิดพลาด ทำรายการไม่สำเร็จ'); window.location='create_gi.php';</script>" . $stmt_so->error;
+        $stmt_gi->close();
     }
 
-    $stmt_so->close();
     $conn->close();
 }
 ?>
