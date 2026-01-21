@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $stmt_item->close();
 
-            echo "<script>alert('บันทึกใบรับสินค้า (Pending) เรียบร้อยแล้ว'); window.location='create_gr.php';</script>";
+            echo "<script>alert('ขออนุมัติใบรับสินค้าเรียบร้อยแล้ว'); window.location='create_gr.php';</script>";
         }
 
         $stmt_gr->close();

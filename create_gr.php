@@ -169,7 +169,7 @@ include('server.php');
     </div>
 
     <div class="mb-3 text-end">
-        <button type="submit" class="btn btn-primary">บันทึกใบรับสินค้า</button>
+        <button type="submit" class="btn btn-primary">ขออนุมัติใบรับสินค้า</button>
     </div>
 
 </form>

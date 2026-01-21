@@ -159,7 +159,7 @@
         </div>
 
         <div class="mb-3 text-end">
-            <button type="submit" class="btn btn-primary">บันทึกใบสั่งขาย</button>
+            <button type="submit" class="btn btn-primary">ขออนุมัติใบเบิกสินค้า</button>
         </div>
     </form>
 

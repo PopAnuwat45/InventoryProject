@@ -104,7 +104,9 @@ if (isset($_POST['search_product'])) {
         sm.movement_qty, 
         sm.created_by,
         gr.gr_number,
+        gr.ref_doc_number,
         gi.gi_number,
+        gi.ref_so_number,
         l.location_full_id
     FROM stock_movement sm
     LEFT JOIN goods_receipt gr 
@@ -132,6 +134,7 @@ if (isset($_POST['search_product'])) {
                                 <th>ประเภท</th>
                                 <th>อ้างอิง</th>
                                 <th>เลขใบทำการ</th>
+                                <th>เลขที่เอกสารอ้างอิง</th>
                                 <th>รับเข้า</th>
                                 <th>เบิกออก</th>
                                 <th>ผู้ทำรายการ</th>
@@ -144,7 +147,10 @@ if (isset($_POST['search_product'])) {
                 $ref_number = ($row['movement_type'] === 'IN') ? $row['gr_number'] : $row['gi_number'];
                 if (empty($ref_number)) $ref_number = '-';
 
-                
+                // ✅ เลือกเอกสารอ้างอิงตามประเภท IN/OUT
+                $ref_doc = ($row['movement_type'] === 'IN') ? $row['ref_doc_number'] : $row['ref_so_number'];
+                if (empty($ref_doc)) $ref_doc = '-';
+
 
                 // ✅ แยกคอลัมน์รับเข้า / จ่ายออก
                 $qty_in  = ($row['movement_type'] === 'IN')  ? $row['movement_qty'] : '';
@@ -166,6 +172,7 @@ if (isset($_POST['search_product'])) {
                         <td>{$row['movement_type']}</td>
                         <td>{$row['ref_type']}</td>
                         <td>{$ref_number}</td>
+                        <td>{$ref_doc}</td>
                         <td class='text-success'>" . (($row['movement_type'] === 'IN') ? $qty_display : '') . "</td>
                          <td class='text-danger'>" . (($row['movement_type'] === 'OUT') ? $qty_display : '') . "</td>
                         <td>{$row['created_by']}</td>

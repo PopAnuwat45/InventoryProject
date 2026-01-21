@@ -50,65 +50,93 @@ while ($row = $result_items->fetch_assoc()) {
     $items[] = $row;
 }
 
-/* ===============================
-   เมื่อกด Approve
-================================ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
 
     $conn->begin_transaction();
 
     try {
 
-        // ===== Update สถานะ GR =====
-        $sql_update = "UPDATE goods_receipt
-                       SET gr_status = 'Approve', approved_by = ?
-                       WHERE gr_id = ? AND gr_status = 'Pending'";
-        $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("si", $approved_by, $gr_id);
-        $stmt_update->execute();
+        /* ===============================
+           กรณีกด "ไม่อนุมัติ"
+        ================================ */
+        if (isset($_POST['reject'])) {
 
-        if ($stmt_update->affected_rows === 0) {
-            throw new Exception('รายการนี้ถูกอนุมัติไปแล้ว');
+            $sql_reject = "UPDATE goods_receipt
+                           SET gr_status = 'Reject'
+                           WHERE gr_id = ? AND gr_status = 'Pending'";
+            $stmt_reject = $conn->prepare($sql_reject);
+            $stmt_reject->bind_param("i", $gr_id);
+            $stmt_reject->execute();
+
+            if ($stmt_reject->affected_rows === 0) {
+                throw new Exception('รายการนี้ถูกดำเนินการไปแล้ว');
+            }
+
+            $conn->commit();
+
+            echo "<script>
+                    alert('ไม่อนุมัติใบรับสินค้าเรียบร้อยแล้ว');
+                    window.location='approval_requests.php';
+                  </script>";
+            exit;
         }
 
-        // ===== ดึง movement_id ล่าสุดครั้งเดียว =====
-        $result = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
-        $row = $result->fetch_assoc();
-        $movement_id = $row['last_id'] ? $row['last_id'] : 0;
+        /* ===============================
+           กรณีกด "อนุมัติ"
+        ================================ */
+        if (isset($_POST['approve'])) {
 
-        // ===== Insert Stock Movement =====
-        $sql_move = "INSERT INTO stock_movement
-            (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
-            VALUES (?, ?, NOW(), 'IN', 'GR', ?, ?, ?)";
-        $stmt_move = $conn->prepare($sql_move);
+            // Update สถานะ GR
+            $sql_update = "UPDATE goods_receipt
+                           SET gr_status = 'Approve', approved_by = ?
+                           WHERE gr_id = ? AND gr_status = 'Pending'";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->bind_param("si", $approved_by, $gr_id);
+            $stmt_update->execute();
 
-        foreach ($items as $item) {
-            $movement_id++;
+            if ($stmt_update->affected_rows === 0) {
+                throw new Exception('รายการนี้ถูกอนุมัติไปแล้ว');
+            }
 
-            $stmt_move->bind_param(
-                "iiiis",
-                $movement_id,
-                $item['product_id'],
-                $gr_id,
-                $item['gr_qty'],
-                $approved_by
-            );
-            $stmt_move->execute();
+            // ดึง movement_id ล่าสุด
+            $result = $conn->query("SELECT MAX(movement_id) AS last_id FROM stock_movement");
+            $row = $result->fetch_assoc();
+            $movement_id = $row['last_id'] ?? 0;
+
+            // Insert stock movement
+            $sql_move = "INSERT INTO stock_movement
+                (movement_id, product_id, movement_date, movement_type, ref_type, ref_id, movement_qty, created_by)
+                VALUES (?, ?, NOW(), 'IN', 'GR', ?, ?, ?)";
+            $stmt_move = $conn->prepare($sql_move);
+
+            foreach ($items as $item) {
+                $movement_id++;
+                $stmt_move->bind_param(
+                    "iiiis",
+                    $movement_id,
+                    $item['product_id'],
+                    $gr_id,
+                    $item['gr_qty'],
+                    $approved_by
+                );
+                $stmt_move->execute();
+            }
+
+            $conn->commit();
+
+            echo "<script>
+                    alert('อนุมัติใบรับสินค้าเรียบร้อยแล้ว');
+                    window.location='approval_requests.php';
+                  </script>";
+            exit;
         }
-
-        $conn->commit();
-
-        echo "<script>
-                alert('อนุมัติใบรับสินค้าเรียบร้อยแล้ว');
-                window.location='approval_requests.php';
-              </script>";
-        exit;
 
     } catch (Exception $e) {
         $conn->rollback();
         die('เกิดข้อผิดพลาด: ' . $e->getMessage());
     }
 }
+
 
 ?>
 
@@ -192,15 +220,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
         </table>
     </div>
 
-    <!-- ปุ่มอนุมัติ -->
+    <!-- ปุ่มอนุมัติ และ ไม่อนุมัติ-->
     <?php if ($gr['gr_status'] === 'Pending'): ?>
     <form method="POST" class="text-end">
-        <button type="submit" class="btn btn-primary"
+
+        <button type="submit"
+                name="approve"
+                class="btn btn-success"
                 onclick="this.disabled=true; this.form.submit();">
             อนุมัติรายการ
+        </button>    
+
+        <button   button type="submit"
+                name="reject"
+                class="btn btn-danger me-2"
+                onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
+            ไม่อนุมัติ
         </button>
-    </form>
-    <?php endif; ?>
+
+        
+
+</form>
+<?php endif; ?>
+
+
+
 
 </div>
 

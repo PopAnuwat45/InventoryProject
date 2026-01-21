@@ -5,10 +5,6 @@
                 <div class="col-6 col-md-3">
                     <a href ="approval_requests.php" class="btn btn-outline-primary w-100">✅ รายการคำขออนุมัติ</a>
                 </div>
-
-                <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">✅ ประวัติการอนุมัติ</a>
-                </div>
         
                 <div class="col-6 col-md-3">
                     <a href ="create_gi.php" class="btn btn-outline-primary w-100">📤 เบิกสินค้าออก</a>
