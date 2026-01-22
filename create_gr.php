@@ -89,9 +89,9 @@ include('server.php');
         </div>
 
         <!-- Section: Create GR -->
-    <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
+        <h5 class="mb-3 fw-bold">ทำรายการรับสินค้า (Goods Receipt)</h5>
 
-    <form action="save_gr.php" method="POST">
+        <form action="save_gr.php" method="POST">
     
         <input type="hidden" name="action" value="save">
 
