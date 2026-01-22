@@ -146,7 +146,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <th>ชื่อสินค้า</th>
                 <th width="120">จำนวน</th>
                 <th width="120">หน่วย</th>
-                <th width="80">ลบ</th>
             </tr>
         </thead>
         <tbody>
@@ -200,22 +199,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            readonly>
                 </td>
 
-                <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm remove-row">
-                        ลบ
-                    </button>
-                </td>
             </tr>
         <?php endwhile; ?>
 
         </tbody>
     </table>
 
-    <button type="button"
-            class="btn btn-outline-success btn-sm"
-            id="add_item_btn">
-        ➕ เพิ่มสินค้า
-    </button>
 </div>
 
 <div class="text-end">
