@@ -2,43 +2,43 @@
 include('server.php');
 
 /* ===============================
-   รับค่า gr_id
+   รับค่า gi_id
 ================================ */
-if (!isset($_GET['gr_id'])) {
+if (!isset($_GET['gi_id'])) {
     die('ไม่พบข้อมูลใบรับสินค้า');
 }
-$gr_id = intval($_GET['gr_id']);
+$gi_id = intval($_GET['gi_id']);
 
 /* ===============================
-   ดึงข้อมูลหัว GR (ต้องเป็น Reject)
+   ดึงข้อมูลหัว GI (ต้องเป็น Reject)
 ================================ */
-$sql_gr = "SELECT * FROM goods_receipt 
-           WHERE gr_id = ? AND gr_status = 'Reject'";
-$stmt_gr = $conn->prepare($sql_gr);
-$stmt_gr->bind_param("i", $gr_id);
-$stmt_gr->execute();
-$result_gr = $stmt_gr->get_result();
+$sql_gi = "SELECT * FROM goods_issue 
+           WHERE gi_id = ? AND gi_status = 'Reject'";
+$stmt_gi = $conn->prepare($sql_gi);
+$stmt_gi->bind_param("i", $gi_id);
+$stmt_gi->execute();
+$result_gi = $stmt_gi->get_result();
 
-if ($result_gr->num_rows === 0) {
+if ($result_gi->num_rows === 0) {
     die('ไม่พบรายการ หรือรายการไม่อยู่ในสถานะที่แก้ไขได้');
 }
-$gr = $result_gr->fetch_assoc();
+$gi = $result_gi->fetch_assoc();
 
 /* ===============================
    ดึงรายการสินค้า
 ================================ */
 $sql_items = "SELECT 
-                gri.gr_item_id,
-                gri.product_id,
-                gri.gr_qty,
+                gii.gi_item_id,
+                gii.product_id,
+                gii.gi_qty,
                 p.product_id_full,
                 p.product_name,
                 p.unit
-            FROM goods_receipt_item gri
-            JOIN product p ON gri.product_id = p.product_id
-            WHERE gri.gr_id = ?";
+            FROM goods_issue_item gii
+            JOIN product p ON gii.product_id = p.product_id
+            WHERE gii.gi_id = ?";
 $stmt_items = $conn->prepare($sql_items);
-$stmt_items->bind_param("i", $gr_id);
+$stmt_items->bind_param("i", $gi_id);
 $stmt_items->execute();
 $result_items = $stmt_items->get_result();
 
@@ -50,23 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->begin_transaction();
 
     try {
-        foreach ($_POST['gr_item_id'] as $index => $gr_item_id) {
-            $qty = intval($_POST['gr_qty'][$index]);
+        foreach ($_POST['gi_item_id'] as $index => $gi_item_id) {
+            $qty = intval($_POST['gi_qty'][$index]);
 
-            $sql_update = "UPDATE goods_receipt_item
-                           SET gr_qty = ?
-                           WHERE gr_item_id = ?";
+            $sql_update = "UPDATE goods_issue_item
+                           SET gi_qty = ?
+                           WHERE gi_item_id = ?";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("ii", $qty, $gr_item_id);
+            $stmt_update->bind_param("ii", $qty, $gi_item_id);
             $stmt_update->execute();
         }
 
         // ส่งกลับไป Pending
-        $sql_status = "UPDATE goods_receipt
-                       SET gr_status = 'Pending'
-                       WHERE gr_id = ?";
+        $sql_status = "UPDATE goods_issue
+                       SET gi_status = 'Pending'
+                       WHERE gi_id = ?";
         $stmt_status = $conn->prepare($sql_status);
-        $stmt_status->bind_param("i", $gr_id);
+        $stmt_status->bind_param("i", $gi_id);
         $stmt_status->execute();
 
         $conn->commit();
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แก้ไขใบรับสินค้า</title>
+    <title>แก้ไขใบเบิกสินค้า</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container my-4">
 
     <h5 class="fw-bold mb-2">
-        แก้ไขใบรับสินค้า (ถูกไม่อนุมัติ)
+        แก้ไขใบเบิกสินค้า (ถูกไม่อนุมัติ)
     </h5>
 
     <a href="reject_list.php" class="btn btn-outline-danger btn-sm mb-3">
@@ -119,16 +119,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card mb-3">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4"><strong>เลขที่ GR:</strong> <?= $gr['gr_number']; ?></div>
-                <div class="col-md-4"><strong>วันที่:</strong> <?= $gr['gr_date']; ?></div>
+                <div class="col-md-4"><strong>เลขที่ GI:</strong> <?= $gi['gi_number']; ?></div>
+                <div class="col-md-4"><strong>วันที่:</strong> <?= $gi['gi_date']; ?></div>
                 <div class="col-md-4">
                     <strong>สถานะ:</strong>
                     <span class="badge bg-danger">Reject</span>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-md-4"><strong>เอกสารอ้างอิง:</strong> <?= $gr['ref_doc_number']; ?></div>
-                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gr['created_by']; ?></div>
+                <div class="col-md-4"><strong>เอกสารอ้างอิง:</strong> <?= $gi['ref_so_number']; ?></div>
+                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gi['created_by']; ?></div>
             </div>
         </div>
     </div>
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="mb-3">
     <label class="form-label">รายการสินค้า</label>
 
-    <table class="table table-bordered table-striped" id="gr_items_table">
+    <table class="table table-bordered table-striped" id="gi_items_table">
         <thead class="table-warning">
             <tr>
                 <th>รหัสสินค้า</th>
@@ -170,14 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                value="<?= $item['product_id']; ?>">
 
                         <input type="hidden"
-                               name="gr_item_id[]"
-                               value="<?= $item['gr_item_id']; ?>">
+                               name="gi_item_id[]"
+                               value="<?= $item['gi_item_id']; ?>">
                     </div>
                 </td>
 
                 <td>
                     <input type="text"
-                           name="gr_name[]"
+                           name="gi_name[]"
                            class="form-control"
                            value="<?= $item['product_name']; ?>"
                            readonly>
@@ -185,10 +185,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <td>
                     <input type="number"
-                           name="gr_qty[]"
+                           name="gi_qty[]"
                            class="form-control"
                            min="1"
-                           value="<?= $item['gr_qty']; ?>"
+                           value="<?= $item['gi_qty']; ?>"
                            required>
                 </td>
 

@@ -3,6 +3,8 @@
 
     $created_by = 'admin'; // ชั่วคราว
 
+    $current_page = basename($_SERVER['PHP_SELF']);
+
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25
     $month = date('m'); // เช่น 10

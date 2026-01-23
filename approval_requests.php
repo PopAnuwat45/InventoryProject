@@ -3,6 +3,8 @@ include('server.php');
 
 $activeTab = $_GET['tab'] ?? 'gr';
 
+$current_page = basename($_SERVER['PHP_SELF']);
+
 /* ===============================
    ดึงข้อมูล GR Pending
 ================================ */

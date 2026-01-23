@@ -24,6 +24,14 @@ body {
 .btn-primary:hover {
     background-color: #1e4691;
 }
+/* อันนึ้คือเอาไว้ตอน Active หน้าเมนู */
+.btn-outline-primary:hover,
+.btn-outline-primary.active {
+    background-color: #1e4691;
+    border-color: #1e4691;
+    color: #fff;
+}
+
 
 /* ส่วนตารางสินค้า */
 .table-primary th {

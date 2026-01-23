@@ -1,6 +1,8 @@
 <?php
 include('server.php');
 
+$current_page = basename($_SERVER['PHP_SELF']);
+
     $created_by = 'admin'; // ชั่วคราว
     $approved_by = 'admin'; // ชั่วคราว
 
