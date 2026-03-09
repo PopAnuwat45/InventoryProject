@@ -69,3 +69,16 @@
                         <?php endif; ?>
                     </a>
                 </div>
+
+
+                <div class="col-6 col-md-3">
+                    <a href ="#" class="btn btn-outline-primary w-100"> รายการที่ได้รับการอนุมัติแล้ว</a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a href ="#" class="btn btn-outline-primary w-100"> รายการสินค้าที่ต้องซื้อเพิ่ม</a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a href ="#" class="btn btn-outline-primary w-100"> รายงานผล</a>
+                </div>
