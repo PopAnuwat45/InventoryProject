@@ -126,6 +126,11 @@ $total_Reject_count = $gr_reject_count + $gi_reject_count;
                                            class="btn btn-sm btn-warning">
                                             แก้ไข
                                         </a>
+                                        <a href="cancel_gr.php?gr_id=<?= $gr['gr_id'] ?>&tab=gr"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('ต้องการยกเลิกรายการนี้หรือไม่?');">
+                                            ยกเลิก
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -168,6 +173,12 @@ $total_Reject_count = $gr_reject_count + $gi_reject_count;
                                         <a href="edit_gi.php?gi_id=<?= $gi['gi_id'] ?>"
                                            class="btn btn-sm btn-warning">
                                             แก้ไข
+                                        </a>
+
+                                        <a href="cancel_gi.php?gi_id=<?= $gi['gi_id'] ?>&tab=gi"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('ต้องการยกเลิกรายการนี้หรือไม่?');">
+                                            ยกเลิก
                                         </a>
                                     </td>
                                 </tr>
