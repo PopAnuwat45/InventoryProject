@@ -36,8 +36,9 @@ $sql_items = "SELECT
                 gri.gr_qty,
                 p.product_id_full,
                 p.product_name,
-                p.unit
+                u.unit_name
             FROM goods_receipt_item gri
+            LEFT JOIN unit u ON p.unit_id = u.unit_id
             JOIN product p ON gri.product_id = p.product_id
             WHERE gri.gr_id = ?";
 $stmt_items = $conn->prepare($sql_items);

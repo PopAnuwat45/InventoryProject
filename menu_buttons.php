@@ -2,6 +2,12 @@
 <?php include('reject_count.php'); ?>
 
                 <div class="col-6 col-md-3">
+                    <a href ="index.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'index.php') ? 'active' : '' ?>">
+                    📦 รายการสินค้าทั้งหมด</a>
+                </div>
+
+                <div class="col-6 col-md-3">
                     <a href ="create_gr.php" class="btn btn-outline-primary w-100
                     <?= ($current_page == 'create_gr.php') ? 'active' : '' ?>">
                     🚚 รับสินค้าเข้า</a>
@@ -11,7 +17,7 @@
                     <a href="approval_requests.php"
                     class="btn btn-outline-primary w-100 position-relative
                     <?= ($current_page == 'approval_requests.php') ? 'active' : '' ?>">
-                        ✅ รายการคำขออนุมัติ
+                        📝 รายการคำขออนุมัติ
 
                         <?php if ($total_approval_count > 0): ?>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -74,13 +80,13 @@
                 <div class="col-6 col-md-3">
                     <a href ="approve_list.php" class="btn btn-outline-primary w-100
                     <?= ($current_page == 'approve_list.php') ? 'active' : '' ?>">
-                    รายการที่ได้รับการอนุมัติแล้ว</a>
+                    ✅ รายการที่ได้รับการอนุมัติแล้ว</a>
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100"> รายการสินค้าที่ต้องซื้อเพิ่ม</a>
+                    <a href ="#" class="btn btn-outline-primary w-100"> ⚠️ รายการสินค้าที่ต้องซื้อเพิ่ม</a>
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100"> รายงานผล</a>
+                    <a href ="#" class="btn btn-outline-primary w-100"> 📊 รายงานผล</a>
                 </div>
