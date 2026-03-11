@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100"> ⚠️ รายการสินค้าที่ต้องซื้อเพิ่ม</a>
+                    <a href ="#" class="btn btn-outline-primary w-100"> ⚠️ รายการสินค้าถึงจุดสั่งซื้อ</a>
                 </div>
 
                 <div class="col-6 col-md-3">
