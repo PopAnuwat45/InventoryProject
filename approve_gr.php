@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
                     <td><?= $item['product_id_full']; ?></td>
                     <td><?= $item['product_name']; ?></td>
                     <td class="text-success">+<?= $item['gr_qty']; ?></td>
-                    <td><?= $item['unit']; ?></td>
+                    <td><?= $item['unit_name']; ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
