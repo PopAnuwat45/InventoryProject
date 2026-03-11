@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
 <div class="container my-4">
 
     <h5 class="fw-bold mb-2">รายละเอียดใบรับสินค้า</h5>
-    <a href="approve_list.php" class="btn btn-outline-danger btn-sm mb-3">
+    <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
 

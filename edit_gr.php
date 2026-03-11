@@ -33,9 +33,10 @@ $sql_items = "SELECT
                 gri.gr_qty,
                 p.product_id_full,
                 p.product_name,
-                p.unit
+                u.unit_name
             FROM goods_receipt_item gri
             JOIN product p ON gri.product_id = p.product_id
+            LEFT JOIN unit u ON p.unit_id = u.unit_id
             WHERE gri.gr_id = ?";
 $stmt_items = $conn->prepare($sql_items);
 $stmt_items->bind_param("i", $gr_id);
@@ -196,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text"
                            name="unit[]"
                            class="form-control unit-field"
-                           value="<?= $item['unit']; ?>"
+                           value="<?= $item['unit_name']; ?>"
                            readonly>
                 </td>
 
