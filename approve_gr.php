@@ -37,9 +37,9 @@ $sql_items = "SELECT
                 p.product_id_full,
                 p.product_name,
                 u.unit_name
-            FROM goods_receipt_item gri
-            LEFT JOIN unit u ON p.unit_id = u.unit_id
+            FROM goods_receipt_item gri    
             JOIN product p ON gri.product_id = p.product_id
+            LEFT JOIN unit u ON p.unit_id = u.unit_id
             WHERE gri.gr_id = ?";
 $stmt_items = $conn->prepare($sql_items);
 $stmt_items->bind_param("i", $gr_id);

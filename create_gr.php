@@ -162,7 +162,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </td>
                     <td><input type="text" name="gr_name[]" class="form-control" require readonly></td>
                     <td><input type="number" name="gr_qty[]" class="form-control" min="1" required></td>
-                    <td><input type="text" name="unit[]" class="form-control unit-field" readonly></td>
+                    <td><input type="text" name="unit_name[]" class="form-control unit-field" readonly></td>
                     <td><button type="button" class="btn btn-danger btn-sm remove-row">ลบ</button></td>
                 </tr>
             </tbody>
@@ -251,16 +251,16 @@ document.addEventListener('DOMContentLoaded', function(){
             let product_id = $(this).data("id");
             let product_code = $(this).data("code");
             let product_name = $(this).data("name");
-            let unit = $(this).data("unit");
+            let unit_name = $(this).data("unit");
 
             let parent = $(this).closest(".product-list").parent();
             parent.find(".product-search").val(product_code);
             parent.find(".product-id").val(product_id);
-            parent.find(".unit-field").val(unit);
+            parent.find(".unit-field").val(unit_name);
 
             // ✅ หา input ชื่อสินค้าในแถวเดียวกัน แล้วใส่ชื่อ
             parent.closest('tr').find('input[name="gr_name[]"]').val(product_name);
-            parent.closest('tr').find('input[name="unit[]"]').val(unit);
+            parent.closest('tr').find('input[name="unit_name[]"]').val(unit_name);
 
             $(this).parent().hide(); // ซ่อนผลลัพธ์
         });
