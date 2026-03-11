@@ -36,9 +36,10 @@ $sql_items = "SELECT
                 gii.gi_qty,
                 p.product_id_full,
                 p.product_name,
-                p.unit
+                u.unit_name
             FROM goods_issue_item gii
             JOIN product p ON gii.product_id = p.product_id
+            LEFT JOIN unit u ON p.unit_id = u.unit_id
             WHERE gii.gi_id = ?";
 $stmt_items = $conn->prepare($sql_items);
 $stmt_items->bind_param("i", $gi_id);
@@ -205,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
                     <td><?= $item['product_id_full']; ?></td>
                     <td><?= $item['product_name']; ?></td>
                     <td class="text-danger">-<?= $item['gi_qty']; ?></td>
-                    <td><?= $item['unit']; ?></td>
+                    <td><?= $item['unit_name']; ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
