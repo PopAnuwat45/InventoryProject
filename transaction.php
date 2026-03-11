@@ -146,8 +146,19 @@ if (isset($_POST['search_product'])) {
             while ($row = $result_movement->fetch_assoc()) {
 
                 // ✅ เลือกเลขใบตามประเภท IN/OUT
-                $ref_number = ($row['movement_type'] === 'IN') ? $row['gr_number'] : $row['gi_number'];
-                if (empty($ref_number)) $ref_number = '-';
+                if ($row['ref_type'] === 'GR' && !empty($row['gr_number'])) {
+                    $ref_number = "<a href='approve_gr.php?gr_id={$row['ref_id']}' class='text-decoration-none fw-bold'>
+                                    {$row['gr_number']}
+                                </a>";
+                } 
+                elseif ($row['ref_type'] === 'GI' && !empty($row['gi_number'])) {
+                    $ref_number = "<a href='approve_gi.php?gi_id={$row['ref_id']}' class='text-decoration-none fw-bold'>
+                                    {$row['gi_number']}
+                                </a>";
+                } 
+                else {
+                    $ref_number = "-";
+                }
 
                 // ✅ เลือกเอกสารอ้างอิงตามประเภท IN/OUT
                 $ref_doc = ($row['movement_type'] === 'IN') ? $row['ref_doc_number'] : $row['ref_so_number'];

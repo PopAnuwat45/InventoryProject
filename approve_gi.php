@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>อนุมัติใบเบิกสินค้า</title>
+    <title>ระบบคลังสินค้า (Inventory System)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>

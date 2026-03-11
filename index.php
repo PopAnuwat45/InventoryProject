@@ -1,6 +1,7 @@
 <?php
     // connect to DB
     include('server.php');
+    $search = $_GET['search'] ?? '';
 
 
     // ดึงข้อมูลสินค้า พร้อมคำนวณยอดคงเหลือ
@@ -10,14 +11,26 @@
     p.unit,
     l.location_full_id,
     IFNULL(SUM(CASE WHEN sm.movement_type = 'IN' THEN sm.movement_qty ELSE 0 END),0)
-    - IFNULL(SUM(CASE WHEN sm.movement_type = 'OUT' THEN sm.movement_qty ELSE 0 END),0) AS stock_balance
+    -
+    IFNULL(SUM(CASE WHEN sm.movement_type = 'OUT' THEN sm.movement_qty ELSE 0 END),0)
+    AS stock_balance
     FROM product p
     LEFT JOIN location l ON p.location_id = l.location_id
     LEFT JOIN stock_movement sm ON p.product_id = sm.product_id
+    WHERE p.product_id_full LIKE ?
+    OR p.product_name LIKE ?
     GROUP BY p.product_id
     ORDER BY p.product_id_full, l.location_full_id";
 
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+
+    $search_param = "%{$search}%";
+
+    $stmt->bind_param("ss", $search_param, $search_param);
+
+    $stmt->execute();
+
+    $result = $stmt->get_result();
 
 
 ?>
@@ -59,7 +72,14 @@
         <div class="inventory-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold mb-0">รายการสินค้าในคลัง</h5>
-                <input type="text" class="form-control w-50 w-md-25" placeholder="🔍 ค้นหาสินค้าจากรหัสที่นี่...">
+                <form method="GET" class="d-flex w-50">
+                <input type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="🔍 ค้นหาสินค้า..."
+                    value="<?php echo $_GET['search'] ?? ''; ?>">
+                <button class="btn btn-primary ms-2">ค้นหา</button>
+                </form>
             </div>
 
             <?php

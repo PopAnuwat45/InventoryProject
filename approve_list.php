@@ -3,6 +3,8 @@ include('server.php');
 
 $activeTab = $_GET['tab'] ?? 'gr';
 
+$search = $_GET['search'] ?? '';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 
 /* ===============================
@@ -16,8 +18,23 @@ $sql_gr = "SELECT
             approved_by
         FROM goods_receipt
         WHERE gr_status = 'Approve'
+        AND (
+            gr_number LIKE ?
+            OR ref_doc_number LIKE ?
+            OR approved_by LIKE ?
+        )
         ORDER BY gr_date DESC";
-$result_gr = $conn->query($sql_gr);
+
+$stmt_gr = $conn->prepare($sql_gr);
+
+$search_param = "%{$search}%";
+
+$stmt_gr->bind_param("sss", $search_param, $search_param, $search_param);
+
+$stmt_gr->execute();
+
+$result_gr = $stmt_gr->get_result();
+
 $gr_count = $result_gr->num_rows;
 
 /* ===============================
@@ -31,8 +48,22 @@ $sql_gi = "SELECT
             approved_by
         FROM goods_issue
         WHERE gi_status = 'Approve'
+        AND (
+            gi_number LIKE ?
+            OR ref_so_number LIKE ?
+            OR approved_by LIKE ?
+        )
         ORDER BY gi_date DESC";
-$result_gi = $conn->query($sql_gi);
+
+
+$stmt_gi = $conn->prepare($sql_gi);
+
+$stmt_gi->bind_param("sss", $search_param, $search_param, $search_param);
+
+$stmt_gi->execute();
+
+$result_gi = $stmt_gi->get_result();
+
 $gi_count = $result_gi->num_rows;
 
 $total_approval_count = $gr_count + $gi_count;
@@ -75,6 +106,27 @@ $total_approval_count = $gr_count + $gi_count;
 
         <!-- Section: Approval Requests -->
 <div class="approval-section">
+
+    <form method="GET" class="d-flex mb-3">
+
+    <input type="hidden" name="tab" value="<?= $activeTab ?>">
+
+    <input type="text"
+        name="search"
+        class="form-control w-50"
+        placeholder="🔍 ค้นหาเลขเอกสาร / ผู้อนุมัติ"
+        value="<?= htmlspecialchars($search) ?>">
+
+    <button class="btn btn-outline-success ms-2">
+    ค้นหา
+    </button>
+
+    <a href="approve_list.php?tab=<?= $activeTab ?>" 
+    class="btn btn-outline-danger ms-2">
+    ล้าง
+    </a>
+
+    </form>
 
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-3 fw-bold">
