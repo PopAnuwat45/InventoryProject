@@ -147,7 +147,7 @@ $result = $stmt->get_result();
 
     <div class="container">
 
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
 
             <img src="img/logo.jpg" width="100" height="30" class="me-2">
 
