@@ -249,7 +249,7 @@ $result = $stmt->get_result();
 
                             $stock_class = 'text-danger fw-bold';
 
-                            $warning = '<span class="badge bg-danger ms-1">ต่ำกว่า ROP</span>';
+                            $warning = '<span class="badge bg-danger ms-1">ถึงจุด ROP</span>';
 
                         }
 
