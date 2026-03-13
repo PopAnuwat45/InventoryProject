@@ -38,7 +38,9 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">🛠 จัดการสินค้า</a>
+                    <a href ="manage_products.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'manage_products.php') ? 'active' : '' ?>">
+                    🛠 จัดการสินค้า</a>
                 </div>
 
                 <div class="col-6 col-md-3">
