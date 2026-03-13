@@ -61,9 +61,10 @@ if (isset($_POST['search_product'])) {
         p.product_id, 
         p.product_id_full,
         p.product_name, 
-        p.unit,
+        u.unit_name,
         l.location_full_id
     FROM product p
+    LEFT JOIN unit u ON p.unit_id = u.unit_id
     LEFT JOIN location l ON p.location_id = l.location_id
     WHERE p.product_id_full = ?
     ";
@@ -195,7 +196,7 @@ if (isset($_POST['search_product'])) {
                     </table>
                   </div>';
             
-            echo "<h5><p class='fw-bold mt-2'>ยอดคงเหลือล่าสุด: {$current_stock} {$product['unit']}</p></h5>";
+            echo "<h5><p class='fw-bold mt-2'>ยอดคงเหลือล่าสุด: {$current_stock} {$product['unit_name']}</p></h5>";
 
         } else {
             echo "<p>ยังไม่มีการเคลื่อนไหวของสินค้านี้</p>";

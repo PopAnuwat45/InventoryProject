@@ -63,11 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
         /* ---------- Reject ---------- */
         if (isset($_POST['reject'])) {
 
+            $reject_reason = $_POST['reject_reason'];
+
             $sql_reject = "UPDATE goods_issue
-                           SET gi_status = 'Reject'
+                           SET gi_status = 'Reject',
+                                reject_reason = ?
                            WHERE gi_id = ? AND gi_status = 'Pending'";
             $stmt_reject = $conn->prepare($sql_reject);
-            $stmt_reject->bind_param("i", $gi_id);
+            $stmt_reject->bind_param("si",$reject_reason, $gi_id);
             $stmt_reject->execute();
 
             if ($stmt_reject->affected_rows === 0) {
@@ -87,7 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
         if (isset($_POST['approve'])) {
 
             $sql_update = "UPDATE goods_issue
-                           SET gi_status = 'Approve', approved_by = ?
+                           SET gi_status = 'Approve', approved_by = ?,
+                                reject_reason = '-'
                            WHERE gi_id = ? AND gi_status = 'Pending'";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bind_param("si", $approved_by, $gi_id);
@@ -185,6 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
             <div class="row mt-2">
                 <div class="col-md-4"><strong>เอกสารอ้างอิง (SO):</strong> <?= $gi['ref_so_number']; ?></div>
                 <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gi['created_by']; ?></div>
+                <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gi['reject_reason']; ?></div>
             </div>
         </div>
     </div>
@@ -215,7 +220,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
 
     <!-- ปุ่ม -->
     <?php if ($gi['gi_status'] === 'Pending'): ?>
-    <form method="POST" class="text-end">
+    <form method="POST">
+
+        <div class="mb-3 col-md-7">
+            <label for="reject_reason" class="form-label fw-bold text-danger">**กรณีไม่อนุมติการทำรายการ ใส่เหตุผลที่นี่**</label>
+            <input type="text" name="reject_reason" id="reject_reason" class="form-control" placeholder ="เหตุผลในการไม่อนุมัติใบทำรายการ" autocomplete="off">
+        </div>
+
+        <div class ="text-end">
         <button type="submit" name="approve"
                 class="btn btn-success">
             อนุมัติรายการ
@@ -225,6 +237,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
                 onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
             ไม่อนุมัติ
         </button>
+        </div>
+
+
     </form>
     <?php endif; ?>
 

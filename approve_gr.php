@@ -62,11 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
         ================================ */
         if (isset($_POST['reject'])) {
 
+            $reject_reason = $_POST['reject_reason'];
+
             $sql_reject = "UPDATE goods_receipt
-                           SET gr_status = 'Reject'
+                           SET gr_status = 'Reject',
+                                reject_reason = ?
                            WHERE gr_id = ? AND gr_status = 'Pending'";
             $stmt_reject = $conn->prepare($sql_reject);
-            $stmt_reject->bind_param("i", $gr_id);
+            $stmt_reject->bind_param("si", $reject_reason, $gr_id);
             $stmt_reject->execute();
 
             if ($stmt_reject->affected_rows === 0) {
@@ -89,7 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
 
             // Update สถานะ GR
             $sql_update = "UPDATE goods_receipt
-                           SET gr_status = 'Approve', approved_by = ?
+                           SET gr_status = 'Approve', approved_by = ?,
+                                reject_reason = '-'
                            WHERE gr_id = ? AND gr_status = 'Pending'";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bind_param("si", $approved_by, $gr_id);
@@ -193,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
             <div class="row mt-2">
                 <div class="col-md-4"><strong>เอกสารอ้างอิง:</strong> <?= $gr['ref_doc_number']; ?></div>
                 <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gr['created_by']; ?></div>
+                <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gr['reject_reason']; ?></div>
             </div>
         </div>
     </div>
@@ -221,26 +226,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
         </table>
     </div>
 
-    <!-- ปุ่มอนุมัติ และ ไม่อนุมัติ-->
-    <?php if ($gr['gr_status'] === 'Pending'): ?>
-    <form method="POST" class="text-end">
-
-        <button type="submit"
-                name="approve"
-                class="btn btn-success">
-            อนุมัติรายการ
-        </button>    
-
-        <button type="submit"
-                name="reject"
-                class="btn btn-danger me-2"
-                onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
-            ไม่อนุมัติ
-        </button>
-
         
 
-</form>
+    <!-- ปุ่มอนุมัติ และ ไม่อนุมัติ-->
+    <?php if ($gr['gr_status'] === 'Pending'): ?>
+    <form method="POST">
+
+        <div class="mb-3 col-md-7">
+            <label for="reject_reason" class="form-label fw-bold text-danger">**กรณีไม่อนุมติการทำรายการ ใส่เหตุผลที่นี่**</label>
+            <input type="text" name="reject_reason" id="reject_reason" class="form-control" placeholder ="เหตุผลในการไม่อนุมัติใบทำรายการ" autocomplete="off">
+        </div>
+
+        <div class="text-end">
+            <button type="submit"
+                    name="approve"
+                    class="btn btn-success">
+                อนุมัติรายการ
+            </button>    
+
+            <button type="submit"
+                    name="reject"
+                    class="btn btn-danger me-2"
+                    onclick="return confirm('ยืนยันการไม่อนุมัติรายการนี้?');">
+                ไม่อนุมัติ
+            </button>
+        </div>         
+    </form>
 <?php endif; ?>
 
 
