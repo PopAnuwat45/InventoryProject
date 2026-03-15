@@ -167,7 +167,7 @@ $result = $stmt->get_result();
     <div class="menu-section mb-4">
 
         <h5 class="mb-3 fw-bold">
-            เมนูหลัก (สำหรับผู้ดูแลระบบ)
+            จัดการสินค้า
         </h5>
 
         <div class="row g-2">

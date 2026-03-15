@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3 col-md-4">
 
                 <label class="form-label">
-                    จุดสั่งซื้อซ้ำ (ROP)
+                    จุดสั่งซื้อซ้ำ ReorderPoint (ROP)
                 </label>
 
                 <input

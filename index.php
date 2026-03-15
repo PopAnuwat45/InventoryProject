@@ -4,6 +4,8 @@ include('server.php');
 
 $search = $_GET['search'] ?? '';
 
+$current_page = basename($_SERVER['PHP_SELF']);
+
 // Pagination
 $limit = 5; // จำนวนรายการต่อหน้า
 $page = $_GET['page'] ?? 1;
@@ -89,7 +91,7 @@ $end_item = min($offset + $limit, $total_rows);
 <div class="container my-4">
 
     <div class="menu-section mb-4">
-        <h5 class="mb-3 fw-bold">เมนูหลัก (สำหรับผู้ดูแลระบบ)</h5>
+        <h5 class="mb-3 fw-bold">รายการสินค้าทั้งหมด</h5>
         <div class="row g-2">
             <?php include('menu_buttons.php') ?>
         </div>
