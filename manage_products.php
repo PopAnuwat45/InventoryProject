@@ -18,6 +18,7 @@ if ($page < 1) {
 $offset = ($page - 1) * $limit;
 
 
+
 /* =====================================
    Search
 ===================================== */
@@ -50,6 +51,23 @@ $count_result = $stmt->get_result();
 $total_rows = $count_result->fetch_assoc()['total'];
 
 $total_pages = ceil($total_rows / $limit);
+
+
+/* =====================================
+   Calculate showing rows
+===================================== */
+
+$start_item = $offset + 1;
+$end_item   = $offset + $limit;
+
+if ($end_item > $total_rows) {
+    $end_item = $total_rows;
+}
+
+if ($total_rows == 0) {
+    $start_item = 0;
+}
+
 
 
 /* =====================================
@@ -297,31 +315,46 @@ $result = $stmt->get_result();
 
         </div>
 
+      
 
         <!-- Pagination -->
 
-        <nav class="mt-3">
+        <div class="d-flex justify-content-between align-items-center mt-3">
 
-            <ul class="pagination justify-content-center">
+         <!-- Showing rows -->
 
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <div class="text-muted">
+                แสดง <?= $start_item ?> - <?= $end_item ?> รายการ
+                จากทั้งหมด <?= $total_rows ?> รายการ
+            </div>
 
-                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
 
-                        <a
-                            class="page-link"
-                            href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"
-                        >
-                            <?= $i ?>
-                        </a>
+        <!-- Pagination -->
 
-                    </li>
+            <nav>
 
-                <?php endfor; ?>
+                <ul class="pagination mb-0">
 
-            </ul>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
 
-        </nav>
+                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+
+                            <a
+                                class="page-link"
+                                href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"
+                            >
+                                <?= $i ?>
+                            </a>
+
+                        </li>
+
+                    <?php endfor; ?>
+
+                </ul>
+
+            </nav>
+
+        </div>
 
     </div>
 

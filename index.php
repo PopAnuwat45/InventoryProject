@@ -153,7 +153,7 @@ $end_item = min($offset + $limit, $total_rows);
         <div class="d-flex justify-content-between align-items-center mt-3">
 
             <div>
-                แสดง <?= $start_item ?> - <?= $end_item ?> จากทั้งหมด <?= $total_rows ?> รายการ
+                แสดง <?= $start_item ?> - <?= $end_item ?> รายการ จากทั้งหมด <?= $total_rows ?> รายการ
             </div>
 
             <nav>

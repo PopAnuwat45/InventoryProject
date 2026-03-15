@@ -149,6 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         เพิ่มสินค้าใหม่
     </h5>
 
+    <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm mb-3">
+        ⬅️ กลับ
+    </a>
+
     <form method="POST">
 
         <div class="row">
