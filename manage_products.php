@@ -323,7 +323,7 @@ $result = $stmt->get_result();
 
          <!-- Showing rows -->
 
-            <div class="text-muted">
+            <div class="text">
                 แสดง <?= $start_item ?> - <?= $end_item ?> รายการ
                 จากทั้งหมด <?= $total_rows ?> รายการ
             </div>
