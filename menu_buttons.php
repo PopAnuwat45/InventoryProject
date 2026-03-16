@@ -101,5 +101,7 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100"> 📊 รายงานผล</a>
+                    <a href ="report.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'report.php') ? 'active' : '' ?>"> 
+                    📊 รายงานผล</a>
                 </div>
