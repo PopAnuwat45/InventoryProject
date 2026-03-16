@@ -1,5 +1,6 @@
 <?php include('approval_count.php'); ?>
 <?php include('reject_count.php'); ?>
+<?php include('reorderpoint_count.php'); ?>
 
                 <div class="col-6 col-md-3">
                     <a href ="index.php" class="btn btn-outline-primary w-100
@@ -90,9 +91,13 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="product_reorder.php" class="btn btn-outline-primary w-100
+                    <a href ="product_reorder.php" class="btn btn-outline-primary w-100 position-relative
                     <?= ($current_page == 'product_reorder.php') ? 'active' : '' ?>"> 
-                    ⚠️ รายการสินค้าถึงจุดสั่งซื้อ</a>
+                    ⚠️ รายการสินค้าถึงจุดสั่งซื้อ
+                        <?php if ($total_reorder_count > 0): ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $total_reorder_count ?></span>
+                        <?php endif; ?>
+                    </a>
                 </div>
 
                 <div class="col-6 col-md-3">
