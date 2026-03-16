@@ -97,7 +97,7 @@ $total_reorder_count = $result->num_rows;
 <div class="menu-section mb-4">
 
 <h5 class="mb-3 fw-bold">
-สินค้าใกล้ถึงจุดสั่งซื้อ
+สินค้าถึงจุดสั่งซื้อซ้ำ
 </h5>
 
 <div class="row g-2">
