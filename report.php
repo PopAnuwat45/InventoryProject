@@ -68,7 +68,7 @@ AND MONTH(sm.movement_date) BETWEEN $start_month AND $end_month
 
 GROUP BY sm.product_id
 ORDER BY move_count DESC
-LIMIT 10
+LIMIT 5
 ";
 
 $result_top_move = mysqli_query($conn,$sql_top_move);
@@ -93,7 +93,7 @@ AND MONTH(sm.movement_date) BETWEEN $start_month AND $end_month
 
 GROUP BY p.product_id
 ORDER BY move_count ASC
-LIMIT 10
+LIMIT 5
 ";
 
 $result_low_move = mysqli_query($conn,$sql_low_move);
@@ -290,7 +290,7 @@ $result_low_move = mysqli_query($conn,$sql_low_move);
 <div class="card shadow-sm">
 
 <div class="card-header fw-bold">
-สินค้าที่เคลื่อนไหวมากที่สุด
+สินค้าที่เคลื่อนไหวมากที่สุด 5 รายการ
 </div>
 
 <div class="card-body">
@@ -334,7 +334,7 @@ $result_low_move = mysqli_query($conn,$sql_low_move);
 <div class="card shadow-sm">
 
 <div class="card-header fw-bold">
-สินค้าที่เคลื่อนไหวน้อยที่สุด
+สินค้าที่เคลื่อนไหวน้อยที่สุด 5 รายการ
 </div>
 
 <div class="card-body">
