@@ -90,7 +90,9 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100"> ⚠️ รายการสินค้าถึงจุดสั่งซื้อ</a>
+                    <a href ="product_reorder.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'product_reorder.php') ? 'active' : '' ?>"> 
+                    ⚠️ รายการสินค้าถึงจุดสั่งซื้อ</a>
                 </div>
 
                 <div class="col-6 col-md-3">
