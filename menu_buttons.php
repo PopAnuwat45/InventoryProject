@@ -34,7 +34,9 @@
                 </div>
                 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">👤 จัดการผู้ใช้</a>
+                    <a href ="manage_users.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'manage_users.php') ? 'active' : '' ?>">
+                    👤 จัดการผู้ใช้</a>
                 </div>
 
                 <div class="col-6 col-md-3">
