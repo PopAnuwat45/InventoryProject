@@ -46,7 +46,9 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a href ="#" class="btn btn-outline-primary w-100">🗄️ จัดการชั้นวางของ</a>
+                    <a href ="manage_location.php" class="btn btn-outline-primary w-100
+                    <?= ($current_page == 'manage_location.php') ? 'active' : '' ?>">
+                    🗄️ จัดการตำแหน่งจัดเก็บ</a>
                 </div>
 
                 <div class="col-6 col-md-3">
