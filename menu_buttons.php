@@ -42,15 +42,12 @@
 
                 <div class="col-6 col-md-3">
                     <a href ="manage_products.php" class="btn btn-outline-primary w-100
-                    <?= ($current_page == 'manage_products.php') ? 'active' : '' ?>">
+                    <?= ($current_page == 'manage_products.php') ? 'active' : '' ?>
+                    ">
                     🛠 จัดการสินค้า</a>
                 </div>
 
-                <div class="col-6 col-md-3">
-                    <a href ="manage_location.php" class="btn btn-outline-primary w-100
-                    <?= ($current_page == 'manage_location.php') ? 'active' : '' ?>">
-                    🗄️ จัดการตำแหน่งจัดเก็บ</a>
-                </div>
+                
 
                 <div class="col-6 col-md-3">
                     <a href ="transaction.php" class="btn btn-outline-primary w-100

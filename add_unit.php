@@ -5,99 +5,99 @@ $current_page ="manage_products.php";
 
 
 /* ===============================
-   ADD LOCATION
+   ADD UNIT
 ================================ */
 
-if(isset($_POST['add_location'])){
+if(isset($_POST['add_unit'])){
 
-    $location = trim($_POST['location_full_id']);
+    $unit = trim($_POST['unit_name']);
 
-    if($location != ""){
+    if($unit != ""){
 
         $stmt = $conn->prepare("
-            SELECT location_id
-            FROM location
-            WHERE location_full_id = ?
+            SELECT unit_id
+            FROM unit
+            WHERE unit_name = ?
         ");
 
-        $stmt->bind_param("s",$location);
+        $stmt->bind_param("s",$unit);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if($result->num_rows == 0){
 
             $stmt = $conn->prepare("
-                INSERT INTO location (location_full_id)
+                INSERT INTO unit (unit_name)
                 VALUES (?)
             ");
 
-            $stmt->bind_param("s",$location);
+            $stmt->bind_param("s",$unit);
             $stmt->execute();
 
         }
 
     }
 
-    header("Location: manage_location.php");
+    header("Location: add_unit.php");
     exit();
 }
 
 
 /* ===============================
-   UPDATE LOCATION
+   UPDATE UNIT
 ================================ */
 
-if(isset($_POST['update_location'])){
+if(isset($_POST['update_unit'])){
 
-    $location_id = $_POST['location_id'];
-    $location    = trim($_POST['location_full_id']);
+    $unit_id = $_POST['unit_id'];
+    $unit    = trim($_POST['unit_name']);
 
-    if($location != ""){
+    if($unit != ""){
 
         $stmt = $conn->prepare("
-            UPDATE location
-            SET location_full_id = ?
-            WHERE location_id = ?
+            UPDATE unit
+            SET unit_name = ?
+            WHERE unit_id = ?
         ");
 
-        $stmt->bind_param("si",$location,$location_id);
+        $stmt->bind_param("si",$unit,$unit_id);
         $stmt->execute();
     }
 
-    header("Location: manage_location.php");
+    header("Location: add_unit.php");
     exit();
 }
 
 
 /* ===============================
-   DELETE LOCATION
+   DELETE UNIT
 ================================ */
 
 if(isset($_GET['delete'])){
 
-    $location_id = $_GET['delete'];
+    $unit_id = $_GET['delete'];
 
     $stmt = $conn->prepare("
-        DELETE FROM location
-        WHERE location_id = ?
+        DELETE FROM unit
+        WHERE unit_id = ?
     ");
 
-    $stmt->bind_param("i",$location_id);
+    $stmt->bind_param("i",$unit_id);
     $stmt->execute();
 
-    header("Location: manage_location.php");
+    header("Location: add_unit.php");
     exit();
 }
 
 
 /* ===============================
-   GET LOCATION
+   GET UNIT
 ================================ */
 
 $result = $conn->query("
     SELECT *
-    FROM location
-    ORDER BY location_full_id
+    FROM unit
+    ORDER BY unit_id
 ");
 
 ?>
@@ -120,6 +120,7 @@ $result = $conn->query("
 
 <body class="d-flex flex-column min-vh-100">
 
+
 <!-- NAVBAR -->
 
 <nav class="navbar navbar-expand-lg navbar-dark main-nav">
@@ -141,12 +142,13 @@ $result = $conn->query("
 
 <div class="container my-4">
 
+
 <!-- MENU -->
 
 <div class="menu-section mb-4">
 
 <h5 class="mb-3 fw-bold">
-จัดการตำแหน่งที่จัดเก็บสินค้า
+จัดการหน่วยนับสินค้า
 </h5>
 
 <div class="row g-2">
@@ -159,12 +161,12 @@ $result = $conn->query("
         ⬅️ กลับ
     </a>
 
-<!-- ADD LOCATION -->
+<!-- ADD UNIT -->
 
 <div class="card mb-4">
 
 <div class="card-header fw-bold">
-เพิ่มตำแหน่งจัดเก็บสินค้า
+เพิ่มหน่วยนับสินค้า
 </div>
 
 <div class="card-body">
@@ -175,9 +177,9 @@ $result = $conn->query("
 
 <input
 type="text"
-name="location_full_id"
+name="unit_name"
 class="form-control"
-placeholder="เช่น A1-01"
+placeholder="เช่น ชิ้น / กล่อง / แพ็ค"
 required
 >
 
@@ -187,9 +189,9 @@ required
 
 <button
 class="btn btn-success w-100"
-name="add_location"
+name="add_unit"
 >
-เพิ่มตำแหน่ง
+เพิ่มหน่วย
 </button>
 
 </div>
@@ -201,12 +203,13 @@ name="add_location"
 </div>
 
 
-<!-- LOCATION TABLE -->
+
+<!-- UNIT TABLE -->
 
 <div class="card">
 
 <div class="card-header fw-bold">
-รายการตำแหน่งจัดเก็บสินค้า
+รายการหน่วยนับสินค้า
 </div>
 
 <div class="table-responsive">
@@ -218,7 +221,7 @@ name="add_location"
 <tr>
 
 <th width="20%">ลำดับ</th>
-<th width="50%">ตำแหน่งจัดเก็บ</th>
+<th width="50%">หน่วยนับ</th>
 <th width="15%" class="text-center">บันทึก</th>
 
 </tr>
@@ -235,12 +238,12 @@ name="add_location"
 
 <td>
 
-<?= $row['location_id'] ?>
+<?= $row['unit_id'] ?>
 
 <input
 type="hidden"
-name="location_id"
-value="<?= $row['location_id'] ?>"
+name="unit_id"
+value="<?= $row['unit_id'] ?>"
 >
 
 </td>
@@ -249,9 +252,9 @@ value="<?= $row['location_id'] ?>"
 
 <input
 type="text"
-name="location_full_id"
+name="unit_name"
 class="form-control"
-value="<?= htmlspecialchars($row['location_full_id']) ?>"
+value="<?= htmlspecialchars($row['unit_name']) ?>"
 >
 
 </td>
@@ -259,14 +262,13 @@ value="<?= htmlspecialchars($row['location_full_id']) ?>"
 <td class="text-center">
 
 <button
-name="update_location"
+name="update_unit"
 class="btn btn-primary btn-sm"
 >
 บันทึก
 </button>
 
 </td>
-
 
 </tr>
 
@@ -283,6 +285,7 @@ class="btn btn-primary btn-sm"
 </div>
 
 </div>
+
 
 
 <!-- FOOTER -->

@@ -208,9 +208,21 @@ $result = $stmt->get_result();
 
         <div class="d-flex justify-content-between mb-3">
 
-            <a href="add_product.php" class="btn btn-primary btn-sm">
-                + เพิ่มสินค้า
-            </a>
+            <div class="d-flex gap-2">
+
+                <a href="add_product.php" class="btn btn-primary btn-sm">
+                    + เพิ่มสินค้า
+                </a>
+
+                <a href="add_unit.php" class="btn btn-primary btn-sm">
+                    + เพิ่มหน่วยนับ
+                </a>
+
+                <a href="manage_location.php" class="btn btn-primary btn-sm">
+                    + เพิ่มตำแหน่งที่จัดเก็บ
+                </a>
+
+            </div>
 
             <form method="GET" class="d-flex" autocomplete="off">
 
