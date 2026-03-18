@@ -1,6 +1,11 @@
 <?php
 // connect to DB
+
+include('check_login.php');
 include('server.php');
+
+$username = $_SESSION['user_id'] ?? '';
+$type = $_SESSION['type']?? '';
 
 $search = $_GET['search'] ?? '';
 
@@ -74,6 +79,7 @@ $end_item = min($offset + $limit, $total_rows);
 <title>ระบบคลังสินค้า (Inventory System)</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -85,6 +91,28 @@ $end_item = min($offset + $limit, $total_rows);
             <img src="img/logo.jpg" width="100" height="30" class="me-2">
             ระบบคลังสินค้า
         </a>
+
+        <!-- ขวา -->
+        <div class="ms-auto d-flex align-items-center">
+
+            <!-- User Info -->
+            <div class="d-flex align-items-center text-white me-3">
+                <i class="bi bi-person-circle fs-4 me-2"></i>
+                <span>
+                    <?php 
+                        echo ($username ?? 'Guest') . 
+                            ' (' . ($type ?? '-') . ')'; 
+                    ?>
+                </span>
+            </div>
+
+            <!-- Logout -->
+            <a href="logout.php" class="btn btn-outline-light btn-sm">
+                ออกจากระบบ
+            </a>
+
+        </div>
+
     </div>
 </nav>
 
