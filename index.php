@@ -4,7 +4,7 @@
 include('check_login.php');
 include('server.php');
 
-$username = $_SESSION['user_id'] ?? '';
+$name = $_SESSION['name'] ?? '';
 $type = $_SESSION['type']?? '';
 
 $search = $_GET['search'] ?? '';
@@ -100,7 +100,7 @@ $end_item = min($offset + $limit, $total_rows);
                 <i class="bi bi-person-circle fs-4 me-2"></i>
                 <span>
                     <?php 
-                        echo ($username ?? 'Guest') . 
+                        echo ($name ?? 'Guest') . 
                             ' (' . ($type ?? '-') . ')'; 
                     ?>
                 </span>

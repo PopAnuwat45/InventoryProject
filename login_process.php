@@ -22,6 +22,7 @@
         if (password_verify($password, $hashPasswordFromDB)) {
             $_SESSION['user_id'] = $user['username'];
             $_SESSION['type'] = $user['type'];
+            $_SESSION['name'] = $user['name'];
             echo "<script type='text/javascript'>";
             echo "alert('Login Succesfully');";
             echo "window.location = 'index.php'; ";
