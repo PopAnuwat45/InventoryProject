@@ -1,5 +1,4 @@
 <?php
-include('server.php');
 
 include('check_login.php');
 include('server.php');

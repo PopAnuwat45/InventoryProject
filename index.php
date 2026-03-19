@@ -110,7 +110,6 @@ $end_item = min($offset + $limit, $total_rows);
             <a href="logout.php" class="btn btn-outline-light btn-sm">
                 ออกจากระบบ
             </a>
-
         </div>
 
     </div>
