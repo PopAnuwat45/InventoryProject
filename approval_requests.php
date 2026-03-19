@@ -1,6 +1,12 @@
 <?php
 include('server.php');
 
+include('check_login.php');
+include('server.php');
+
+$name = $_SESSION['name'] ?? '';
+$type = $_SESSION['type']?? '';
+
 $activeTab = $_GET['tab'] ?? 'gr';
 
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -47,6 +53,8 @@ $total_approval_count = $gr_count + $gi_count;
     <title>ระบบคลังสินค้า (Inventory System)</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -59,6 +67,26 @@ $total_approval_count = $gr_count + $gi_count;
                 <img src="img/logo.jpg" alt="" width="100" height="30" class="me-2">
                 ระบบคลังสินค้า
             </a>
+            <!-- ขวา -->
+            <div class="ms-auto d-flex align-items-center">
+
+                <!-- User Info -->
+                <div class="d-flex align-items-center text-white me-3">
+                    <i class="bi bi-person-circle fs-4 me-2"></i>
+                    <span>
+                        <?php 
+                            echo ($name ?? 'Guest') . 
+                                ' (' . ($type ?? '-') . ')'; 
+                        ?>
+                    </span>
+                </div>
+
+                <!-- Logout -->
+                <a href="logout.php" class="btn btn-outline-light btn-sm">
+                    ออกจากระบบ
+                </a>
+
+            </div>
         </div>
     </nav>
 
