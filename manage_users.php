@@ -1,5 +1,4 @@
 <?php
-include('server.php');
 
 include('check_login.php');
 include('server.php');
@@ -125,7 +124,7 @@ $result = $conn->query("
 
 </a>
 
-<!-- ขวา -->
+        <!-- ขวา -->
         <div class="ms-auto d-flex align-items-center">
 
             <!-- User Info -->
