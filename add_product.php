@@ -1,5 +1,9 @@
 <?php
+include('check_login.php');
 include('server.php');
+
+$name = $_SESSION['name'] ?? '';
+$type = $_SESSION['type']?? '';
 
 /* =====================================
    Generate Product Code
@@ -116,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>เพิ่มสินค้า</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -135,6 +140,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ระบบคลังสินค้า
 
         </a>
+
+        <!-- ขวา -->
+        <div class="ms-auto d-flex align-items-center">
+
+            <!-- User Info -->
+            <div class="d-flex align-items-center text-white me-3">
+                <i class="bi bi-person-circle fs-4 me-2"></i>
+                <span>
+                    <?php 
+                        echo ($name ?? 'Guest') . 
+                            ' (' . ($type ?? '-') . ')'; 
+                    ?>
+                </span>
+            </div>
+
+            <!-- Logout -->
+            <a href="logout.php" class="btn btn-outline-light btn-sm">
+                ออกจากระบบ
+            </a>
+        </div>
 
     </div>
 
