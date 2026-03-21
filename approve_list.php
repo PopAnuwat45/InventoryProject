@@ -57,12 +57,13 @@ $total_pages_gr = ceil($total_gr / $limit);
 
 $sql_gr = "
     SELECT
-        gr_id,
-        gr_number,
-        gr_date,
-        ref_doc_number,
-        approved_by
-    FROM goods_receipt
+        gr.gr_id,
+        gr.gr_number,
+        gr.gr_date,
+        gr.ref_doc_number,
+        u.name AS approved_name
+    FROM goods_receipt gr
+    LEFT JOIN user_tb u ON gr.approved_by = u.username
     WHERE gr_status = 'Approve'
     AND (
         gr_number LIKE ?
@@ -117,12 +118,13 @@ $total_pages_gi = ceil($total_gi / $limit);
 
 $sql_gi = "
     SELECT
-        gi_id,
-        gi_number,
-        gi_date,
-        ref_so_number,
-        approved_by
-    FROM goods_issue
+        gi.gi_id,
+        gi.gi_number,
+        gi.gi_date,
+        gi.ref_so_number,
+        u.name AS approved_name
+    FROM goods_issue gi
+    LEFT JOIN user_tb u ON gi.approved_by = u.username
     WHERE gi_status = 'Approve'
     AND (
         gi_number LIKE ?
@@ -338,7 +340,7 @@ $end   = min($offset_gr + $limit, $total_gr);
 <td><?= htmlspecialchars($gr['gr_number']) ?></td>
 <td><?= htmlspecialchars($gr['gr_date']) ?></td>
 <td><?= htmlspecialchars($gr['ref_doc_number']) ?></td>
-<td><?= htmlspecialchars($gr['approved_by']) ?></td>
+<td><?= htmlspecialchars($gr['approved_name']) ?></td>
 
 <td class="text-center">
 
@@ -479,7 +481,7 @@ $end   = min($offset_gi + $limit, $total_gi);
 <td><?= htmlspecialchars($gi['gi_number']) ?></td>
 <td><?= htmlspecialchars($gi['gi_date']) ?></td>
 <td><?= htmlspecialchars($gi['ref_so_number']) ?></td>
-<td><?= htmlspecialchars($gi['approved_by']) ?></td>
+<td><?= htmlspecialchars($gi['approved_name']) ?></td>
 
 <td class="text-center">
 
@@ -594,4 +596,3 @@ href="?tab=gi&page_gi=<?= $page_gi + 1 ?>&search=<?= urlencode($search) ?>">
 </body>
 
 </html>
-```

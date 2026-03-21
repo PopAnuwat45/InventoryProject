@@ -12,7 +12,7 @@ $search = $_GET['search'] ?? '';
 $current_page = basename($_SERVER['PHP_SELF']);
 
 // Pagination
-$limit = 5; // จำนวนรายการต่อหน้า
+$limit = 10; // จำนวนรายการต่อหน้า
 $page = $_GET['page'] ?? 1;
 $page = (int)$page;
 

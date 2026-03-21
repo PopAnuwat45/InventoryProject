@@ -83,6 +83,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location_id   = $_POST['location_id'];
     $reorder_point = $_POST['reorder_point'];
 
+    // ✅ เช็คซ้ำก่อน
+    $check_sql = "
+        SELECT product_id 
+        FROM product 
+        WHERE product_id_full = ?
+        AND product_id != ?
+    ";
+    $stmt_check = $conn->prepare($check_sql);
+    $stmt_check->bind_param("si", $product_id_full , $product_id);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+
+    if ($result_check->num_rows > 0) {
+        // ❌ มีรหัสซ้ำ
+        echo "<div class='alert alert-danger'>รหัสสินค้านี้มีอยู่แล้ว</div>";
+    } else {
+
     $update_sql = "
         UPDATE product
         SET
@@ -110,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: manage_products.php");
     exit();
+}
 }
 
 ?>

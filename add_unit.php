@@ -182,7 +182,7 @@ $result = $conn->query("
 
 </div>
 
-<a href="javascript:history.back()" class="btn btn-outline-danger btn-sm mb-3">
+<a href="manage_products.php" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
 

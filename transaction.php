@@ -169,7 +169,7 @@ if (isset($_POST['search_product'])) {
                                 <th>เลขที่เอกสารอ้างอิง</th>
                                 <th>รับเข้า</th>
                                 <th>เบิกออก</th>
-                                <th>ผู้ทำรายการ</th>
+                                <th>ผู้อนุมัติรายการ</th>
                             </tr>
                         </thead>
                         <tbody>';

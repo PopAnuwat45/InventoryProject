@@ -5,36 +5,6 @@ include('server.php');
 $name = $_SESSION['name'] ?? '';
 $type = $_SESSION['type']?? '';
 
-/* =====================================
-   Generate Product Code
-===================================== */
-
-$sql = "
-    SELECT product_id_full
-    FROM product
-    ORDER BY product_id DESC
-    LIMIT 1
-";
-
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-
-    $row = $result->fetch_assoc();
-
-    $last_code = $row['product_id_full'];
-
-    $number = (int)substr($last_code, 1);
-
-    $number++;
-
-    $product_code = "P" . str_pad($number, 4, "0", STR_PAD_LEFT);
-
-} else {
-
-    $product_code = "P0001";
-
-}
 
 
 /* =====================================
@@ -73,10 +43,23 @@ $location_result = $conn->query($location_sql);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    $product_code = $_POST['product_id_full'];
     $product_name  = $_POST['product_name'];
     $unit_id       = $_POST['unit_id'];
     $location_id   = $_POST['location_id'];
     $reorder_point = $_POST['reorder_point'];
+
+    // ✅ เช็คซ้ำก่อน
+    $check_sql = "SELECT product_id FROM product WHERE product_id_full = ?";
+    $stmt_check = $conn->prepare($check_sql);
+    $stmt_check->bind_param("s", $product_code);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+
+    if ($result_check->num_rows > 0) {
+        // ❌ มีรหัสซ้ำ
+        echo "<div class='alert alert-danger'>รหัสสินค้านี้มีอยู่แล้ว</div>";
+    } else {
 
     $insert_sql = "
         INSERT INTO product
@@ -105,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: manage_products.php");
     exit();
+}
 }
 
 ?>
@@ -174,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         เพิ่มสินค้าใหม่
     </h5>
 
-    <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm mb-3">
+    <a href="manage_products.php" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
 
@@ -192,10 +176,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <input
                     type="text"
+                    name="product_id_full"
                     class="form-control"
-                    value="<?= $product_code ?>"
+                    required
                 >
-
             </div>
 
 
