@@ -1,10 +1,15 @@
 <?php
 include('server.php');
+session_start();
+
+$username = $_SESSION['username'] ?? '';
+$name = $_SESSION['name'] ?? '';
+$type = $_SESSION['type']?? '';
 
 /* ===============================
    กำหนดผู้อนุมัติ (โหมดทดสอบ)
 ================================ */
-$approved_by = 'admin';
+$approved_by = $username;
 
 /* ===============================
    รับค่า gr_id
@@ -17,7 +22,14 @@ $gr_id = intval($_GET['gr_id']);
 /* ===============================
    ดึงข้อมูลหัว GR
 ================================ */
-$sql_gr = "SELECT * FROM goods_receipt WHERE gr_id = ?";
+$sql_gr = "SELECT 
+                gr.*,
+                u.name AS created_name,
+                u2.name AS approved_name
+           FROM goods_receipt gr
+           JOIN user_tb u ON gr.created_by = u.username
+           LEFT JOIN user_tb u2 ON gr.approved_by = u2.username
+           WHERE gr.gr_id = ?";
 $stmt_gr = $conn->prepare($sql_gr);
 $stmt_gr->bind_param("i", $gr_id);
 $stmt_gr->execute();
@@ -196,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gr['gr_status'] === 'Pending') {
             </div>
             <div class="row mt-2">
                 <div class="col-md-4"><strong>เอกสารอ้างอิง:</strong> <?= $gr['ref_doc_number']; ?></div>
-                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gr['created_by']; ?></div>
+                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gr['created_name']; ?></div>
                 <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gr['reject_reason']; ?></div>
             </div>
         </div>

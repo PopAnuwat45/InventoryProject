@@ -13,14 +13,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
    ดึงข้อมูล GR Pending
 ================================ */
 $sql_gr = "SELECT 
-            gr_id,
-            gr_number,
-            gr_date,
-            ref_doc_number,
-            created_by
-        FROM goods_receipt
-        WHERE gr_status = 'Pending'
-        ORDER BY gr_date DESC";
+            gr.gr_id,
+            gr.gr_number,
+            gr.gr_date,
+            gr.ref_doc_number,
+            gr.created_by,
+            u.name AS created_name
+        FROM goods_receipt gr
+        LEFT JOIN user_tb u ON gr.created_by = u.username
+        WHERE gr.gr_status = 'Pending'
+        ORDER BY gr.gr_date DESC";
 $result_gr = $conn->query($sql_gr);
 $gr_count = $result_gr->num_rows;
 
@@ -28,14 +30,16 @@ $gr_count = $result_gr->num_rows;
    ดึงข้อมูล GI Pending
 ================================ */
 $sql_gi = "SELECT 
-            gi_id,
-            gi_number,
-            gi_date,
-            ref_so_number,
-            created_by
-        FROM goods_issue
-        WHERE gi_status = 'Pending'
-        ORDER BY gi_date DESC";
+            gi.gi_id,
+            gi.gi_number,
+            gi.gi_date,
+            gi.ref_so_number,
+            gi.created_by,
+            u.name AS created_name
+        FROM goods_issue gi
+        LEFT JOIN user_tb u ON gi.created_by = u.username
+        WHERE gi.gi_status = 'Pending'
+        ORDER BY gi.gi_date DESC";
 $result_gi = $conn->query($sql_gi);
 $gi_count = $result_gi->num_rows;
 
@@ -148,7 +152,7 @@ $total_approval_count = $gr_count + $gi_count;
                                     <td><?php echo htmlspecialchars($gr['gr_number']); ?></td>
                                     <td><?php echo htmlspecialchars($gr['gr_date']); ?></td>
                                     <td><?php echo htmlspecialchars($gr['ref_doc_number']); ?></td>
-                                    <td><?php echo htmlspecialchars($gr['created_by']); ?></td>
+                                    <td><?php echo htmlspecialchars($gr['created_name']); ?></td>
                                     <td class="text-center">
                                         <span class="badge bg-warning">Pending</span>
                                     </td>
@@ -188,7 +192,7 @@ $total_approval_count = $gr_count + $gi_count;
                                     <td><?php echo htmlspecialchars($gi['gi_number']); ?></td>
                                     <td><?php echo htmlspecialchars($gi['gi_date']); ?></td>
                                     <td><?php echo htmlspecialchars($gi['ref_so_number']); ?></td>
-                                    <td><?php echo htmlspecialchars($gi['created_by']); ?></td>
+                                    <td><?php echo htmlspecialchars($gi['created_name']); ?></td>
                                     <td class="text-center">
                                         <span class="badge bg-warning">Pending</span>
                                     </td>

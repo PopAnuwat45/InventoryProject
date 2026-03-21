@@ -1,5 +1,6 @@
 <?php
 include 'server.php';
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -20,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $product_ids = $_POST['product_id'];
         $gr_qtys = $_POST['gr_qty'];
 
-        $created_by = $_POST['created_by'];
+        $created_by = $_SESSION['username'];
+
 
         // ===== Insert goods_receipt (Pending) =====
         $sql_gr = "INSERT INTO goods_receipt

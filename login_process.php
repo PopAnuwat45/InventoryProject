@@ -17,10 +17,10 @@
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
         $hashPasswordFromDB = $user['password'];
-        // สร้าง session user_id, type เก็บค่า username และ type
+        // สร้าง session username, type เก็บค่า username และ type
         
         if (password_verify($password, $hashPasswordFromDB)) {
-            $_SESSION['user_id'] = $user['username'];
+            $_SESSION['username'] = $user['username'];
             $_SESSION['type'] = $user['type'];
             $_SESSION['name'] = $user['name'];
             echo "<script type='text/javascript'>";

@@ -3,13 +3,14 @@
 include('check_login.php');
 include('server.php');
 
+$username = $_SESSION['username'] ?? '';
 $name = $_SESSION['name'] ?? '';
 $type = $_SESSION['type']?? '';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 
-    $created_by = 'admin'; // ชั่วคราว
-    $approved_by = 'admin'; // ชั่วคราว
+    $created_by = $username;
+    $approved_by = $name; 
 
     // ดึงปีและเดือนปัจจุบัน
     $year = date('y'); // เช่น 25
@@ -127,8 +128,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <!-- ผู้ทำรายการ -->
         <div class="mb-3">
             <label for="create_by" class="form-label">ผู้ทำรายการ</label>
-            <input type="text" name="created_by" id="created_by" class="form-control" 
-                value="<?php echo $created_by; ?>" readonly>
+            <input type="text" class="form-control" 
+                value="<?php echo $name; ?>" readonly>
         </div>
     
         <div class ="row">

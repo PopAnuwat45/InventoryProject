@@ -18,8 +18,9 @@ $sql_gr = "SELECT
             gr_number,
             gr_date,
             ref_doc_number,
-            created_by
-        FROM goods_receipt
+            u.name AS created_by
+        FROM goods_receipt gr
+        JOIN user_tb u ON gr.created_by = u.username
         WHERE gr_status = 'Pending'
         ORDER BY gr_date DESC";
 $result_gr = $conn->query($sql_gr);
@@ -33,8 +34,9 @@ $sql_gi = "SELECT
             gi_number,
             gi_date,
             ref_so_number,
-            created_by
-        FROM goods_issue
+            u.name AS created_by
+        FROM goods_issue gi
+        JOIN user_tb u ON gi.created_by = u.username
         WHERE gi_status = 'Pending'
         ORDER BY gi_date DESC";
 $result_gi = $conn->query($sql_gi);

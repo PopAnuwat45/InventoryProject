@@ -132,12 +132,15 @@ if (isset($_POST['search_product'])) {
         sm.ref_id, 
         sm.movement_qty, 
         sm.created_by,
+        u.name AS created_name,
         gr.gr_number,
         gr.ref_doc_number,
         gi.gi_number,
         gi.ref_so_number,
         l.location_full_id
     FROM stock_movement sm
+    LEFT JOIN user_tb u
+        ON sm.created_by = u.username
     LEFT JOIN goods_receipt gr 
         ON (sm.ref_type = 'GR' AND sm.ref_id = gr.gr_id)
     LEFT JOIN goods_issue gi 
@@ -214,8 +217,8 @@ if (isset($_POST['search_product'])) {
                         <td>{$ref_number}</td>
                         <td>{$ref_doc}</td>
                         <td class='text-success'>" . (($row['movement_type'] === 'IN') ? $qty_display : '') . "</td>
-                         <td class='text-danger'>" . (($row['movement_type'] === 'OUT') ? $qty_display : '') . "</td>
-                        <td>{$row['created_by']}</td>
+                        <td class='text-danger'>" . (($row['movement_type'] === 'OUT') ? $qty_display : '') . "</td>
+                        <td>" . htmlspecialchars($row['created_name'] ?? $row['created_by']) . "</td>
                       </tr>";
             }
             echo '    </tbody>

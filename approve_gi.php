@@ -1,10 +1,15 @@
 <?php
 include('server.php');
+session_start();
+
+$username = $_SESSION['username'] ?? '';
+$name = $_SESSION['name'] ?? '';
+$type = $_SESSION['type']?? '';
 
 /* ===============================
    กำหนดผู้อนุมัติ (โหมดทดสอบ)
 ================================ */
-$approved_by = 'admin';
+$approved_by = $username;
 
 /* ===============================
    รับค่า gi_id
@@ -17,7 +22,13 @@ $gi_id = intval($_GET['gi_id']);
 /* ===============================
    ดึงข้อมูลหัว GI
 ================================ */
-$sql_gi = "SELECT * FROM goods_issue WHERE gi_id = ?";
+$sql_gi = "SELECT gi.*,
+                  u.name AS created_name,
+                  u2.name AS approved_name
+           FROM goods_issue gi
+           LEFT JOIN user_tb u ON gi.created_by = u.username
+           LEFT JOIN user_tb u2 ON gi.approved_by = u2.username
+           WHERE gi.gi_id = ?";
 $stmt_gi = $conn->prepare($sql_gi);
 $stmt_gi->bind_param("i", $gi_id);
 $stmt_gi->execute();
@@ -188,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
             </div>
             <div class="row mt-2">
                 <div class="col-md-4"><strong>เอกสารอ้างอิง (SO):</strong> <?= $gi['ref_so_number']; ?></div>
-                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gi['created_by']; ?></div>
+                <div class="col-md-4"><strong>ผู้ทำรายการ:</strong> <?= $gi['created_name']; ?></div>
                 <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gi['reject_reason']; ?></div>
             </div>
         </div>
