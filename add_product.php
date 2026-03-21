@@ -179,6 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="product_id_full"
                     class="form-control"
                     required
+                    autocomplete="off"
                 >
             </div>
 
@@ -196,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="product_name"
                     class="form-control"
                     required
+                    autocomplete="off"
                 >
 
             </div>

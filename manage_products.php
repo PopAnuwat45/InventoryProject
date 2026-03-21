@@ -11,7 +11,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
    Pagination
 ===================================== */
 
-$limit = 20;
+$limit = 10;
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 

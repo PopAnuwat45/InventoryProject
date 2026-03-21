@@ -45,7 +45,7 @@ GROUP BY
 
 HAVING current_stock <= p.reorder_point
 
-ORDER BY current_stock ASC
+ORDER BY p.product_id_full ASC
 
 ";
 
