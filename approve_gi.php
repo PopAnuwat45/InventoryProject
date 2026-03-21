@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gi['gi_status'] === 'Pending') {
 
     <h5 class="fw-bold mb-2">รายละเอียดใบเบิกสินค้า</h5>
 
-    <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm mb-3">
+    <a href="approve_list.php" class="btn btn-outline-danger btn-sm mb-3">
         ⬅️ กลับ
     </a>
 
