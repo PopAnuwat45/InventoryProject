@@ -136,6 +136,7 @@ $end_item = min($offset + $limit, $total_rows);
                     class="form-control"
                     placeholder="🔍 ค้นหาสินค้า..."
                     value="<?= htmlspecialchars($search) ?>"
+                    autocomplete="off"
                 >
                 <button class="btn btn-primary ms-2">ค้นหา</button>
             </form>

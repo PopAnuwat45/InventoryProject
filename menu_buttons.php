@@ -108,7 +108,7 @@
                 <div class="col-6 col-md-3">
                     <a href ="product_reorder.php" class="btn btn-outline-primary w-100 position-relative
                     <?= ($current_page == 'product_reorder.php') ? 'active' : '' ?>"> 
-                    ⚠️ รายการสินค้าถึงจุดสั่งซื้อ
+                    ⚠️ รายการสินค้าถึงจุดสั่งซื้อซ้ำ
                         <?php if ($total_reorder_count > 0): ?>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $total_reorder_count ?></span>
                         <?php endif; ?>

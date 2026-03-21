@@ -13,8 +13,14 @@ $gr_id = intval($_GET['gr_id']);
 /* ===============================
    ดึงข้อมูลหัว GR
 ================================ */
-$sql_gr = "SELECT * FROM goods_receipt
-           WHERE gr_id = ? AND gr_status='Reject'";
+$sql_gr = "SELECT 
+                gr.*,
+                u.name AS created_name
+           FROM goods_receipt gr
+           LEFT JOIN user_tb u 
+           ON gr.created_by = u.username
+           WHERE gr.gr_id = ? 
+           AND gr.gr_status='Reject'";
 
 $stmt = $conn->prepare($sql_gr);
 $stmt->bind_param("i",$gr_id);
@@ -223,7 +229,7 @@ die("เกิดข้อผิดพลาด : ".$e->getMessage());
 </div>
 
 <div class="col-md-4">
-<strong>ผู้ทำรายการ:</strong> <?= $gr['created_by']; ?>
+<strong>ผู้ทำรายการ:</strong> <?= $gr['created_name']; ?>
 </div>
 
 <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gr['reject_reason']; ?></div>

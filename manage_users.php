@@ -22,19 +22,35 @@ if(isset($_POST['add_user'])){
 
     if($username != "" && $password != "" && $name != ""){
 
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+        // ✅ เช็ค username ซ้ำ
+        $check = $conn->prepare("SELECT username FROM user_tb WHERE username = ?");
+        $check->bind_param("s", $username);
+        $check->execute();
+        $check->store_result();
 
-        $stmt = $conn->prepare("
-            INSERT INTO user_tb (username,password,name,type)
-            VALUES (?,?,?,?)
-        ");
+        if($check->num_rows > 0){
 
-        $stmt->bind_param("ssss",$username,$hash,$name,$type);
-        $stmt->execute();
+            // ❌ ถ้าซ้ำ
+            echo "<script>alert('Username นี้มีอยู่แล้ว'); window.location='manage_users.php';</script>";
+            exit();
+
+        } else {
+
+            // ✅ ถ้าไม่ซ้ำ -> เพิ่มได้
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            $stmt = $conn->prepare("
+                INSERT INTO user_tb (username,password,name,type)
+                VALUES (?,?,?,?)
+            ");
+
+            $stmt->bind_param("ssss",$username,$hash,$name,$type);
+            $stmt->execute();
+
+            header("Location: manage_users.php");
+            exit();
+        }
     }
-
-    header("Location: manage_users.php");
-    exit();
 }
 
 

@@ -13,8 +13,14 @@ $gi_id = intval($_GET['gi_id']);
 /* ===============================
    ดึงข้อมูลหัว GI
 ================================ */
-$sql_gi = "SELECT * FROM goods_issue 
-           WHERE gi_id = ? AND gi_status='Reject'";
+$sql_gi = "SELECT 
+                gi.*,
+                u.name AS created_name
+           FROM goods_issue gi
+           LEFT JOIN user_tb u 
+           ON gi.created_by = u.username
+           WHERE gi.gi_id = ? 
+           AND gi.gi_status='Reject'";
 
 $stmt = $conn->prepare($sql_gi);
 $stmt->bind_param("i",$gi_id);
@@ -223,7 +229,7 @@ die("เกิดข้อผิดพลาด : ".$e->getMessage());
             </div>
 
             <div class="col-md-4">
-            <strong>ผู้ทำรายการ:</strong> <?= $gi['created_by']; ?>
+            <strong>ผู้ทำรายการ:</strong> <?= $gi['created_name']; ?>
             </div>
 
             <div class="col-md-4"><strong>เหตุผลที่ไม่อนุมัติ:</strong> <?= $gi['reject_reason']; ?></div>

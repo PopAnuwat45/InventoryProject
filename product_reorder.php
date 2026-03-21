@@ -137,7 +137,7 @@ $total_reorder_count = $result->num_rows;
 
 <div class="alert alert-warning">
 
-พบสินค้าที่ถึงจุดสั่งซื้อ
+พบสินค้าที่ถึงจุดสั่งซื้อซ้ำ
 
 <strong><?= $total_reorder_count ?></strong>
 
